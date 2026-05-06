@@ -31,6 +31,11 @@ npm-debug.log*
 *.jpg
 *.jpeg
 
+# Brand assets - kept in GitHub Pages for logo and favicon
+!assets/logo-light.png
+!assets/logo-dark.png
+!assets/favicon.png
+
 # PDF brochures - kept in GitHub Pages so live previews can download them
 !assets/brochures/
 !assets/brochures/*.pdf

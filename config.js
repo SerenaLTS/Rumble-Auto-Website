@@ -4,8 +4,11 @@
  */
 
 const CONFIG = {
+  USE_LOCAL_ASSETS: ['localhost', '127.0.0.1'].includes(window.location.hostname)
+    || window.location.hostname.endsWith('.github.io'),
+
   // 根据环境选择CDN地址
-  CDN_BASE_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  CDN_BASE_URL: ['localhost', '127.0.0.1'].includes(window.location.hostname) || window.location.hostname.endsWith('.github.io')
     ? '/assets' // 本地开发
     : 'https://your-cloudflare-cdn.com/assets', // 生产环境 - 改为你的Cloudflare URL
 
@@ -68,8 +71,8 @@ const CONFIG = {
    * 动态替换页面中所有资源URL（生产环境）
    */
   replaceAssetUrls() {
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      return; // 本地开发，无需替换
+    if (this.USE_LOCAL_ASSETS) {
+      return; // 本地开发和GitHub Pages预览，无需替换
     }
 
     // 替换所有img标签的src

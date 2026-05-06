@@ -32,9 +32,14 @@
 
     <main>
       <section class="page-hero">
-        <button class="page-hero-video js-video-open" type="button" aria-label="Open SITRAK models video">
-          <video src="assets/videos/sort-pr-video.mp4" autoplay muted loop playsinline></video>
-        </button>
+        <div class="page-hero-video js-video-open" role="button" tabindex="0" aria-label="Open SITRAK models video">
+          <iframe
+            src="https://iframe.videodelivery.net/cdf8ea02d91977ff2b847181cc7ed905?autoplay=true&muted=true&loop=true&controls=false"
+            allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"
+            allowfullscreen
+            loading="lazy"
+          ></iframe>
+        </div>
         <div class="page-hero-overlay"></div>
         <div class="page-hero-copy">
           <p class="eyebrow">By Series</p>
@@ -144,7 +149,7 @@
     </footer>
   </div>
   <div class="modal" id="specModal" aria-hidden="true"><button class="modal-close" type="button">×</button><div class="modal-card"><div class="modal-media"><img class="modal-img" src="assets/truck-road.png" alt="" /><div><p class="eyebrow modal-series">Model Details</p><h3 class="modal-title">SITRAK</h3><p class="modal-desc"></p></div></div><div class="modal-specs"></div><div class="modal-actions"><button class="blue-pill js-modal-quote" type="button">ENQUIRE NOW</button><a class="ghost-pill modal-brochure" href="assets/brochures/sitrak-australia-overview.pdf" target="_blank" rel="noopener">DOWNLOAD BROCHURE</a></div></div></div>
-  <div class="modal video-modal" id="heroVideoModal" aria-hidden="true"><button class="modal-close video-modal-close" type="button" aria-label="Close video">×</button><div class="video-modal-card" role="dialog" aria-label="SITRAK models video"><video class="video-modal-player" src="assets/videos/sort-pr-video.mp4" controls playsinline></video></div></div>
+  <div class="modal video-modal" id="heroVideoModal" aria-hidden="true"><button class="modal-close video-modal-close" type="button" aria-label="Close video">×</button><div class="video-modal-card" role="dialog" aria-label="SITRAK models video"><iframe class="video-modal-player" src="https://iframe.videodelivery.net/cdf8ea02d91977ff2b847181cc7ed905" allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;" allowfullscreen loading="lazy"></iframe></div></div>
   <div class="toast" role="status" aria-live="polite"></div>
   <script src="enquiry.js" defer></script>
   <script src="cookie-consent.js" defer></script>

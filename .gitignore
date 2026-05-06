@@ -1,0 +1,48 @@
+# 操作系统文件
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE 编辑器
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# 构建和日志
+node_modules/
+dist/
+build/
+*.log
+npm-debug.log*
+
+# 大型媒体文件 - 存储在Cloudflare CDN
+# 视频文件
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+
+# 大型图像文件 - 存储在Cloudflare CDN
+*.png
+*.jpg
+*.jpeg
+
+# PDF文档 - 存储在Cloudflare CDN
+assets/brochures/*.pdf
+assets/videos/*.mp4
+
+# AVIF格式图像（如果已优化，可以保留）
+# assets/models/*.avif
+
+# 其他
+.env
+.env.local
+config.local.js
+
+# 临时文件
+*.tmp
+.cache/

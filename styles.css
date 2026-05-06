@@ -10,7 +10,7 @@
   --navy:#081735;
   --shadow:0 24px 70px rgba(10,18,35,.09);
   --page-gutter:clamp(24px,5vw,96px);
-  --content-width:min(1680px,calc(100vw - var(--page-gutter) * 2));
+  --content-width:min(1320px,calc(100vw - var(--page-gutter) * 2));
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}

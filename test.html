@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RUMBLE Model Carousel Test</title>
+  <style>
+    :root {
+      --ink: #111722;
+      --muted: #5b6574;
+      --blue: #2f64f6;
+      --line: #dfe4ec;
+      --panel: #f5f7fb;
+      --shadow: 0 28px 80px rgba(13, 24, 42, .14);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background: #ffffff;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .range-test {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 72px 28px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(47, 100, 246, .08), transparent 28%),
+        linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    }
+
+    .range-shell {
+      width: min(1240px, 100%);
+      display: grid;
+      grid-template-columns: minmax(340px, .82fr) minmax(520px, 1.18fr);
+      gap: 52px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      margin: 0 0 20px;
+      color: var(--blue);
+      font-size: 14px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 620px;
+      font-size: clamp(42px, 5vw, 76px);
+      line-height: .98;
+      letter-spacing: 0;
+    }
+
+    .range-copy {
+      margin: 26px 0 0;
+      max-width: 590px;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.55;
+    }
+
+    .range-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 34px;
+    }
+
+    .pill {
+      min-height: 50px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 0 24px;
+      font-size: 14px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .pill.primary {
+      background: var(--blue);
+      color: #fff;
+      box-shadow: 0 14px 34px rgba(47, 100, 246, .22);
+    }
+
+    .pill.secondary {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: #111722;
+    }
+
+    .carousel-stage {
+      position: relative;
+      min-height: 620px;
+      perspective: 1400px;
+      display: grid;
+      place-items: center;
+    }
+
+    .stage-floor {
+      position: absolute;
+      left: 7%;
+      right: 7%;
+      bottom: 88px;
+      height: 124px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(22, 31, 49, .16), rgba(22, 31, 49, .06) 43%, transparent 70%);
+      filter: blur(2px);
+      transform: rotateX(68deg);
+    }
+
+    .stage-ring {
+      position: relative;
+      width: min(690px, 90vw);
+      height: min(520px, 72vw);
+      transform-style: preserve-3d;
+      animation: orbit 16s linear infinite;
+    }
+
+    .model-float {
+      position: absolute;
+      inset: 50% auto auto 50%;
+      width: 420px;
+      height: 260px;
+      margin: -130px 0 0 -210px;
+      display: grid;
+      place-items: center;
+      transform-style: preserve-3d;
+      animation: face 16s linear infinite;
+    }
+
+    .model-float:nth-child(1) {
+      transform: rotateY(0deg) translateZ(250px);
+    }
+
+    .model-float:nth-child(2) {
+      transform: rotateY(120deg) translateZ(250px);
+    }
+
+    .model-float:nth-child(3) {
+      transform: rotateY(240deg) translateZ(250px);
+    }
+
+    .vehicle-panel {
+      position: relative;
+      width: 100%;
+      min-height: 236px;
+      border: 1px solid rgba(215, 222, 234, .76);
+      border-radius: 18px;
+      padding: 16px 22px 20px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, .9), rgba(246, 248, 252, .82));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transform-style: preserve-3d;
+    }
+
+    .vehicle-panel:before {
+      content: "";
+      position: absolute;
+      left: 34px;
+      right: 34px;
+      bottom: 48px;
+      height: 34px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(13, 24, 42, .2), transparent 68%);
+      filter: blur(5px);
+    }
+
+    .vehicle-panel img {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 168px;
+      object-fit: contain;
+      display: block;
+      filter: drop-shadow(0 18px 24px rgba(13, 24, 42, .16));
+    }
+
+    .vehicle-meta {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    .vehicle-meta span {
+      display: block;
+      color: #98a2b3;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .vehicle-meta strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .vehicle-meta em {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.2;
+      font-style: normal;
+      font-weight: 800;
+      text-align: right;
+    }
+
+    .center-badge {
+      position: absolute;
+      width: 178px;
+      height: 178px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      background: #101827;
+      color: #fff;
+      box-shadow: 0 24px 72px rgba(16, 24, 39, .24);
+      z-index: 4;
+    }
+
+    .center-badge strong {
+      display: block;
+      font-size: 28px;
+      letter-spacing: .03em;
+    }
+
+    .center-badge span {
+      display: block;
+      margin-top: 8px;
+      color: rgba(255, 255, 255, .68);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .orbit-note {
+      position: absolute;
+      left: 50%;
+      bottom: 28px;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #697386;
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .orbit-note:before,
+    .orbit-note:after {
+      content: "";
+      width: 34px;
+      height: 1px;
+      background: var(--line);
+    }
+
+    @keyframes orbit {
+      from {
+        transform: rotateX(-7deg) rotateY(0deg);
+      }
+
+      to {
+        transform: rotateX(-7deg) rotateY(-360deg);
+      }
+    }
+
+    @keyframes face {
+      from {
+        rotate: y 0deg;
+      }
+
+      to {
+        rotate: y 360deg;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .stage-ring,
+      .model-float {
+        animation: none;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .range-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .carousel-stage {
+        min-height: 560px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .range-test {
+        padding: 46px 18px;
+      }
+
+      .range-actions {
+        flex-direction: column;
+      }
+
+      .pill {
+        width: 100%;
+      }
+
+      .carousel-stage {
+        min-height: 520px;
+        margin-inline: -18px;
+      }
+
+      .stage-ring {
+        width: 100vw;
+        height: 430px;
+      }
+
+      .model-float {
+        width: 310px;
+        height: 212px;
+        margin: -106px 0 0 -155px;
+      }
+
+      .model-float:nth-child(1) {
+        transform: rotateY(0deg) translateZ(176px);
+      }
+
+      .model-float:nth-child(2) {
+        transform: rotateY(120deg) translateZ(176px);
+      }
+
+      .model-float:nth-child(3) {
+        transform: rotateY(240deg) translateZ(176px);
+      }
+
+      .vehicle-panel {
+        min-height: 202px;
+        padding: 12px 16px 16px;
+      }
+
+      .vehicle-panel img {
+        height: 130px;
+      }
+
+      .vehicle-meta strong {
+        font-size: 20px;
+      }
+
+      .center-badge {
+        width: 132px;
+        height: 132px;
+      }
+
+      .center-badge strong {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="range-test">
+    <section class="range-shell" aria-label="SITRAK model range carousel concept">
+      <div>
+        <p class="eyebrow">Truck Range</p>
+        <h1>Explore our three core SITRAK series.</h1>
+        <p class="range-copy">A cleaner homepage concept using cut-out truck models in motion. The vehicles orbit through the space while the copy stays calm and easy to scan.</p>
+        <div class="range-actions">
+          <a class="pill primary" href="models.html">Open Models Page</a>
+          <a class="pill secondary" href="index.html">Back to Home</a>
+        </div>
+      </div>
+
+      <div class="carousel-stage" aria-hidden="true">
+        <div class="stage-floor"></div>
+        <div class="center-badge">
+          <div>
+            <strong>G5 G7 C9</strong>
+            <span>SITRAK Range</span>
+          </div>
+        </div>
+        <div class="stage-ring">
+          <article class="model-float">
+            <div class="vehicle-panel">
+              <img src="assets/models/g5s-6x4-cargo-cab-chassis.png" alt="" />
+              <div class="vehicle-meta">
+                <div><span>Series</span><strong>G5</strong></div>
+                <em>Cargo / tipper</em>
+              </div>
+            </div>
+          </article>
+          <article class="model-float">
+            <div class="vehicle-panel">
+              <img src="assets/models/g7s-6x4-prime-mover.png" alt="" />
+              <div class="vehicle-meta">
+                <div><span>Series</span><strong>G7</strong></div>
+                <em>Prime mover</em>
+              </div>
+            </div>
+          </article>
+          <article class="model-float">
+            <div class="vehicle-panel">
+              <img src="assets/models/c9h-6x4-prime-mover.png" alt="" />
+              <div class="vehicle-meta">
+                <div><span>Series</span><strong>C9</strong></div>
+                <em>Heavy duty</em>
+              </div>
+            </div>
+          </article>
+        </div>
+        <div class="orbit-note">floating model carousel test</div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

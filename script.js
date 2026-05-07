@@ -164,6 +164,117 @@ function closeModals(){
   document.body.style.overflow = "";
 }
 
+function initSeriesCarousel(){
+  const root = document.getElementById("seriesCarousel");
+  if(!root) return;
+  const cards = Array.from(root.querySelectorAll(".carousel-card"));
+  const prevButton = root.querySelector(".carousel-arrow-prev");
+  const nextButton = root.querySelector(".carousel-arrow-next");
+  const total = cards.length;
+  if(total === 0) return;
+
+  let active = Math.min(1, total - 1);
+  let pointerDown = false;
+  let dragStartX = 0;
+  let dragDeltaX = 0;
+  let activePointerId = null;
+  let pressedCard = null;
+  const dragThreshold = 60;
+
+  function render(){
+    cards.forEach((card, index) => {
+      card.classList.remove("is-active", "is-prev", "is-next");
+      if(index === active) card.classList.add("is-active");
+      else if(index === (active - 1 + total) % total) card.classList.add("is-prev");
+      else if(index === (active + 1) % total) card.classList.add("is-next");
+      card.setAttribute("aria-hidden", index === active ? "false" : "true");
+    });
+  }
+
+  function go(index){
+    active = (index + total) % total;
+    render();
+  }
+
+  function prev(){
+    go(active - 1);
+  }
+
+  function next(){
+    go(active + 1);
+  }
+
+  function stopDragging(){
+    pointerDown = false;
+    root.classList.remove("is-dragging");
+    if(activePointerId !== null && root.hasPointerCapture?.(activePointerId)){
+      root.releasePointerCapture(activePointerId);
+    }
+    activePointerId = null;
+  }
+
+  function triggerSwipe(direction){
+    stopDragging();
+    if(direction > 0) prev();
+    else next();
+    setTimeout(() => { dragDeltaX = 0; }, 60);
+  }
+
+  prevButton?.addEventListener("click", prev);
+  nextButton?.addEventListener("click", next);
+
+  root.addEventListener("pointerdown", event => {
+    if(event.target.closest("a,button")) return;
+    pointerDown = true;
+    dragStartX = event.clientX;
+    dragDeltaX = 0;
+    activePointerId = event.pointerId;
+    pressedCard = event.target.closest(".carousel-card");
+    root.classList.add("is-dragging");
+    root.setPointerCapture?.(event.pointerId);
+  });
+
+  window.addEventListener("pointermove", event => {
+    if(!pointerDown) return;
+    dragDeltaX = event.clientX - dragStartX;
+    if(dragDeltaX > dragThreshold) triggerSwipe(1);
+    else if(dragDeltaX < -dragThreshold) triggerSwipe(-1);
+  });
+
+  function onPointerUp(){
+    if(!pointerDown){
+      pressedCard = null;
+      return;
+    }
+    const finalDelta = dragDeltaX;
+    const tappedCard = pressedCard;
+    stopDragging();
+    pressedCard = null;
+    if(finalDelta > dragThreshold) prev();
+    else if(finalDelta < -dragThreshold) next();
+    else if(tappedCard?.classList.contains("is-prev")) prev();
+    else if(tappedCard?.classList.contains("is-next")) next();
+    setTimeout(() => { dragDeltaX = 0; }, 60);
+  }
+
+  window.addEventListener("pointerup", onPointerUp);
+  window.addEventListener("pointercancel", onPointerUp);
+
+  root.tabIndex = 0;
+  root.addEventListener("keydown", event => {
+    if(event.key === "ArrowLeft"){
+      event.preventDefault();
+      prev();
+    }
+    if(event.key === "ArrowRight"){
+      event.preventDefault();
+      next();
+    }
+  });
+
+  render();
+}
+
 document.querySelectorAll(".menu-toggle").forEach(button => {
   button.addEventListener("click", () => {
     const panel = document.querySelector(".mobile-panel");
@@ -234,3 +345,4 @@ document.querySelectorAll(".js-form").forEach(form => {
 });
 
 applyStoredEnquiry();
+initSeriesCarousel();

@@ -74,6 +74,13 @@
       display: grid;
       place-items: center;
       perspective: 1300px;
+      cursor: grab;
+      touch-action: pan-y;
+      user-select: none;
+    }
+
+    .orbit-stage.is-dragging {
+      cursor: grabbing;
     }
 
     .orbit-shadow {
@@ -93,7 +100,7 @@
       width: min(720px, 86vw);
       height: 500px;
       transform-style: preserve-3d;
-      animation: spin 15s linear infinite;
+      transition: transform .38s ease;
     }
 
     .orbit-card {
@@ -109,7 +116,7 @@
       box-shadow: var(--shadow);
       overflow: hidden;
       transform-style: preserve-3d;
-      animation: keep-facing 15s linear infinite;
+      pointer-events: none;
     }
 
     .orbit-card:nth-child(1) {
@@ -214,33 +221,6 @@
       white-space: nowrap;
     }
 
-    @keyframes spin {
-      from {
-        transform: rotateX(-7deg) rotateY(0deg);
-      }
-
-      to {
-        transform: rotateX(-7deg) rotateY(-360deg);
-      }
-    }
-
-    @keyframes keep-facing {
-      from {
-        rotate: y 0deg;
-      }
-
-      to {
-        rotate: y 360deg;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .orbit-ring,
-      .orbit-card {
-        animation: none;
-      }
-    }
-
     @media (max-width: 980px) {
       .test-shell {
         grid-template-columns: 1fr;
@@ -321,7 +301,7 @@
         <p class="intro">Three clean model cards orbit around the centre, using only the exact PNG images you selected.</p>
       </div>
 
-      <div class="orbit-stage">
+      <div class="orbit-stage" id="orbitStage" aria-label="Drag to rotate model carousel" tabindex="0">
         <div class="orbit-shadow"></div>
         <div class="center-mark">
           <div>
@@ -352,9 +332,75 @@
             </div>
           </article>
         </div>
-        <div class="hint">orbit carousel test</div>
+        <div class="hint">drag to rotate</div>
       </div>
     </section>
   </main>
+
+  <script>
+    const stage = document.getElementById("orbitStage");
+    const ring = stage.querySelector(".orbit-ring");
+    const cards = [...stage.querySelectorAll(".orbit-card")];
+    let rotation = 0;
+    let startX = 0;
+    let startRotation = 0;
+    let dragging = false;
+
+    function render() {
+      ring.style.transform = `rotateX(-7deg) rotateY(${rotation}deg)`;
+      cards.forEach((card) => {
+        card.style.rotate = `y ${-rotation}deg`;
+      });
+    }
+
+    function snapToNearestCard() {
+      rotation = Math.round(rotation / 120) * 120;
+      render();
+    }
+
+    stage.addEventListener("pointerdown", (event) => {
+      dragging = true;
+      startX = event.clientX;
+      startRotation = rotation;
+      stage.classList.add("is-dragging");
+      ring.style.transition = "none";
+      stage.setPointerCapture(event.pointerId);
+    });
+
+    stage.addEventListener("pointermove", (event) => {
+      if (!dragging) return;
+      const delta = event.clientX - startX;
+      rotation = startRotation + delta * .38;
+      render();
+    });
+
+    stage.addEventListener("pointerup", () => {
+      if (!dragging) return;
+      dragging = false;
+      stage.classList.remove("is-dragging");
+      ring.style.transition = "transform .38s ease";
+      snapToNearestCard();
+    });
+
+    stage.addEventListener("pointercancel", () => {
+      dragging = false;
+      stage.classList.remove("is-dragging");
+      ring.style.transition = "transform .38s ease";
+      snapToNearestCard();
+    });
+
+    stage.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") {
+        rotation += 120;
+        snapToNearestCard();
+      }
+      if (event.key === "ArrowRight") {
+        rotation -= 120;
+        snapToNearestCard();
+      }
+    });
+
+    render();
+  </script>
 </body>
 </html>

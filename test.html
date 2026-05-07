@@ -10,8 +10,8 @@
       --muted: #5b6574;
       --blue: #2f64f6;
       --line: #dfe4ec;
-      --panel: #f5f7fb;
-      --shadow: 0 28px 80px rgba(13, 24, 42, .14);
+      --soft: #f5f7fb;
+      --shadow: 0 28px 80px rgba(13, 24, 42, .12);
     }
 
     * {
@@ -23,7 +23,7 @@
       min-height: 100vh;
       font-family: Arial, Helvetica, sans-serif;
       color: var(--ink);
-      background: #ffffff;
+      background: #fff;
     }
 
     a {
@@ -31,22 +31,24 @@
       text-decoration: none;
     }
 
+    button {
+      font: inherit;
+    }
+
     .range-test {
       min-height: 100vh;
       display: grid;
       place-items: center;
-      padding: 72px 28px;
+      padding: 76px 28px;
       overflow: hidden;
-      background:
-        radial-gradient(circle at 18% 18%, rgba(47, 100, 246, .08), transparent 28%),
-        linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      background: linear-gradient(180deg, #fff 0%, #f8fafc 100%);
     }
 
     .range-shell {
-      width: min(1240px, 100%);
+      width: min(1320px, 100%);
       display: grid;
-      grid-template-columns: minmax(340px, .82fr) minmax(520px, 1.18fr);
-      gap: 52px;
+      grid-template-columns: minmax(330px, .74fr) minmax(600px, 1.26fr);
+      gap: 58px;
       align-items: center;
     }
 
@@ -63,8 +65,8 @@
     h1 {
       margin: 0;
       max-width: 620px;
-      font-size: clamp(42px, 5vw, 76px);
-      line-height: .98;
+      font-size: clamp(42px, 5vw, 74px);
+      line-height: .99;
       letter-spacing: 0;
     }
 
@@ -89,10 +91,12 @@
       align-items: center;
       justify-content: center;
       border-radius: 999px;
+      border: 0;
       padding: 0 24px;
       font-size: 14px;
       font-weight: 900;
       text-transform: uppercase;
+      cursor: pointer;
     }
 
     .pill.primary {
@@ -107,220 +111,181 @@
       color: #111722;
     }
 
-    .carousel-stage {
+    .carousel-wrap {
       position: relative;
       min-height: 620px;
-      perspective: 1400px;
       display: grid;
-      place-items: center;
+      align-items: center;
+      overflow: hidden;
+      border-radius: 30px;
+      background:
+        radial-gradient(circle at 50% 76%, rgba(13, 24, 42, .11), transparent 32%),
+        linear-gradient(180deg, #f9fbfe 0%, #eef3fa 100%);
+      border: 1px solid #e4e9f2;
+      box-shadow: 0 24px 80px rgba(13, 24, 42, .08);
     }
 
-    .stage-floor {
-      position: absolute;
-      left: 7%;
-      right: 7%;
-      bottom: 88px;
-      height: 124px;
-      border-radius: 50%;
-      background: radial-gradient(ellipse at center, rgba(22, 31, 49, .16), rgba(22, 31, 49, .06) 43%, transparent 70%);
-      filter: blur(2px);
-      transform: rotateX(68deg);
-    }
-
-    .stage-ring {
+    .carousel-viewport {
       position: relative;
-      width: min(690px, 90vw);
-      height: min(520px, 72vw);
-      transform-style: preserve-3d;
-      animation: orbit 16s linear infinite;
+      height: 480px;
+      cursor: grab;
+      touch-action: pan-y;
+      user-select: none;
     }
 
-    .model-float {
+    .carousel-viewport.is-dragging {
+      cursor: grabbing;
+    }
+
+    .model-card {
       position: absolute;
-      inset: 50% auto auto 50%;
-      width: 420px;
-      height: 260px;
-      margin: -130px 0 0 -210px;
+      left: 50%;
+      top: 50%;
+      width: min(430px, 56vw);
+      min-height: 332px;
       display: grid;
-      place-items: center;
-      transform-style: preserve-3d;
-      animation: face 16s linear infinite;
-    }
-
-    .model-float:nth-child(1) {
-      transform: rotateY(0deg) translateZ(250px);
-    }
-
-    .model-float:nth-child(2) {
-      transform: rotateY(120deg) translateZ(250px);
-    }
-
-    .model-float:nth-child(3) {
-      transform: rotateY(240deg) translateZ(250px);
-    }
-
-    .vehicle-panel {
-      position: relative;
-      width: 100%;
-      min-height: 236px;
-      border: 1px solid rgba(215, 222, 234, .76);
-      border-radius: 18px;
-      padding: 16px 22px 20px;
-      background: linear-gradient(180deg, rgba(255, 255, 255, .9), rgba(246, 248, 252, .82));
+      grid-template-rows: 220px auto;
+      border: 1px solid rgba(218, 225, 236, .9);
+      border-radius: 22px;
+      background: rgba(255, 255, 255, .92);
       box-shadow: var(--shadow);
       overflow: hidden;
-      transform-style: preserve-3d;
+      transform: translate(-50%, -50%);
+      transition: transform .42s ease, opacity .42s ease, filter .42s ease;
+      will-change: transform, opacity;
     }
 
-    .vehicle-panel:before {
+    .model-card:before {
       content: "";
       position: absolute;
-      left: 34px;
-      right: 34px;
-      bottom: 48px;
-      height: 34px;
+      left: 42px;
+      right: 42px;
+      top: 172px;
+      height: 36px;
       border-radius: 50%;
-      background: radial-gradient(ellipse at center, rgba(13, 24, 42, .2), transparent 68%);
-      filter: blur(5px);
+      background: radial-gradient(ellipse at center, rgba(13, 24, 42, .22), transparent 68%);
+      filter: blur(6px);
+      z-index: 0;
     }
 
-    .vehicle-panel img {
+    .model-card img {
       position: relative;
       z-index: 1;
       width: 100%;
-      height: 168px;
+      height: 220px;
       object-fit: contain;
+      padding: 18px 20px 8px;
       display: block;
-      filter: drop-shadow(0 18px 24px rgba(13, 24, 42, .16));
+      filter: drop-shadow(0 18px 24px rgba(13, 24, 42, .15));
+      pointer-events: none;
     }
 
-    .vehicle-meta {
+    .model-copy {
       position: relative;
       z-index: 2;
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 16px;
-      margin-top: 8px;
+      display: grid;
+      gap: 12px;
+      padding: 20px 24px 24px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, .72), #fff);
     }
 
-    .vehicle-meta span {
-      display: block;
+    .model-copy span {
       color: #98a2b3;
       font-size: 12px;
       font-weight: 900;
-      letter-spacing: .12em;
+      letter-spacing: .14em;
       text-transform: uppercase;
     }
 
-    .vehicle-meta strong {
-      display: block;
-      margin-top: 4px;
-      font-size: 24px;
+    .model-copy strong {
+      font-size: 28px;
       line-height: 1;
     }
 
-    .vehicle-meta em {
+    .model-copy p {
+      margin: 0;
       color: var(--muted);
-      font-size: 13px;
-      line-height: 1.2;
-      font-style: normal;
-      font-weight: 800;
-      text-align: right;
+      font-size: 15px;
+      line-height: 1.36;
     }
 
-    .center-badge {
+    .carousel-controls {
       position: absolute;
-      width: 178px;
-      height: 178px;
+      left: 28px;
+      right: 28px;
+      bottom: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      z-index: 8;
+    }
+
+    .arrow-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .arrow-btn {
+      width: 50px;
+      height: 50px;
+      border: 1px solid #d8e0ec;
       border-radius: 50%;
       display: grid;
       place-items: center;
-      text-align: center;
-      background: #101827;
-      color: #fff;
-      box-shadow: 0 24px 72px rgba(16, 24, 39, .24);
-      z-index: 4;
-    }
-
-    .center-badge strong {
-      display: block;
-      font-size: 28px;
-      letter-spacing: .03em;
-    }
-
-    .center-badge span {
-      display: block;
-      margin-top: 8px;
-      color: rgba(255, 255, 255, .68);
-      font-size: 12px;
+      background: #fff;
+      color: #111722;
+      font-size: 24px;
       font-weight: 900;
-      letter-spacing: .12em;
-      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 12px 28px rgba(13, 24, 42, .08);
     }
 
-    .orbit-note {
-      position: absolute;
-      left: 50%;
-      bottom: 28px;
-      transform: translateX(-50%);
+    .dots {
       display: flex;
-      align-items: center;
-      gap: 10px;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border: 0;
+      border-radius: 999px;
+      padding: 0;
+      background: #b9c3d2;
+      cursor: pointer;
+      transition: width .2s ease, background .2s ease;
+    }
+
+    .dot.is-active {
+      width: 28px;
+      background: var(--blue);
+    }
+
+    .model-count {
       color: #697386;
       font-size: 13px;
-      font-weight: 800;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
       white-space: nowrap;
     }
 
-    .orbit-note:before,
-    .orbit-note:after {
-      content: "";
-      width: 34px;
-      height: 1px;
-      background: var(--line);
-    }
-
-    @keyframes orbit {
-      from {
-        transform: rotateX(-7deg) rotateY(0deg);
-      }
-
-      to {
-        transform: rotateX(-7deg) rotateY(-360deg);
-      }
-    }
-
-    @keyframes face {
-      from {
-        rotate: y 0deg;
-      }
-
-      to {
-        rotate: y 360deg;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .stage-ring,
-      .model-float {
-        animation: none;
-      }
-    }
-
-    @media (max-width: 980px) {
+    @media (max-width: 1020px) {
       .range-shell {
         grid-template-columns: 1fr;
       }
 
-      .carousel-stage {
+      .carousel-wrap {
         min-height: 560px;
       }
     }
 
     @media (max-width: 640px) {
       .range-test {
-        padding: 46px 18px;
+        padding: 48px 18px;
       }
 
       .range-actions {
@@ -331,111 +296,265 @@
         width: 100%;
       }
 
-      .carousel-stage {
+      .carousel-wrap {
         min-height: 520px;
-        margin-inline: -18px;
+        border-radius: 22px;
       }
 
-      .stage-ring {
-        width: 100vw;
-        height: 430px;
+      .carousel-viewport {
+        height: 410px;
       }
 
-      .model-float {
-        width: 310px;
-        height: 212px;
-        margin: -106px 0 0 -155px;
+      .model-card {
+        width: min(312px, 82vw);
+        min-height: 274px;
+        grid-template-rows: 170px auto;
       }
 
-      .model-float:nth-child(1) {
-        transform: rotateY(0deg) translateZ(176px);
+      .model-card img {
+        height: 170px;
       }
 
-      .model-float:nth-child(2) {
-        transform: rotateY(120deg) translateZ(176px);
+      .model-card:before {
+        top: 132px;
       }
 
-      .model-float:nth-child(3) {
-        transform: rotateY(240deg) translateZ(176px);
+      .model-copy {
+        padding: 16px 18px 20px;
       }
 
-      .vehicle-panel {
-        min-height: 202px;
-        padding: 12px 16px 16px;
-      }
-
-      .vehicle-panel img {
-        height: 130px;
-      }
-
-      .vehicle-meta strong {
-        font-size: 20px;
-      }
-
-      .center-badge {
-        width: 132px;
-        height: 132px;
-      }
-
-      .center-badge strong {
+      .model-copy strong {
         font-size: 22px;
+      }
+
+      .carousel-controls {
+        left: 18px;
+        right: 18px;
+        bottom: 20px;
+        align-items: flex-end;
+      }
+
+      .dots {
+        display: none;
+      }
+
+      .arrow-btn {
+        width: 46px;
+        height: 46px;
       }
     }
   </style>
 </head>
 <body>
   <main class="range-test">
-    <section class="range-shell" aria-label="SITRAK model range carousel concept">
+    <section class="range-shell" aria-label="SITRAK model carousel concept">
       <div>
         <p class="eyebrow">Truck Range</p>
-        <h1>Explore our three core SITRAK series.</h1>
-        <p class="range-copy">A cleaner homepage concept using cut-out truck models in motion. The vehicles orbit through the space while the copy stays calm and easy to scan.</p>
+        <h1>Explore our SITRAK models in motion.</h1>
+        <p class="range-copy">This test uses the PNG model images currently inside <strong>assets/models</strong>. Drag the trucks, use the arrows, or click the dots to move through the range.</p>
         <div class="range-actions">
           <a class="pill primary" href="models.html">Open Models Page</a>
           <a class="pill secondary" href="index.html">Back to Home</a>
         </div>
       </div>
 
-      <div class="carousel-stage" aria-hidden="true">
-        <div class="stage-floor"></div>
-        <div class="center-badge">
-          <div>
-            <strong>G5 G7 C9</strong>
-            <span>SITRAK Range</span>
+      <div class="carousel-wrap">
+        <div class="carousel-viewport" id="carousel" aria-label="Draggable SITRAK model carousel" tabindex="0"></div>
+        <div class="carousel-controls">
+          <div class="arrow-group">
+            <button class="arrow-btn" type="button" data-dir="-1" aria-label="Previous model">‹</button>
+            <button class="arrow-btn" type="button" data-dir="1" aria-label="Next model">›</button>
           </div>
+          <div class="dots" id="dots" aria-label="Model carousel navigation"></div>
+          <div class="model-count" id="count">01 / 10</div>
         </div>
-        <div class="stage-ring">
-          <article class="model-float">
-            <div class="vehicle-panel">
-              <img src="assets/models/g5s-6x4-cargo-cab-chassis.png" alt="" />
-              <div class="vehicle-meta">
-                <div><span>Series</span><strong>G5</strong></div>
-                <em>Cargo / tipper</em>
-              </div>
-            </div>
-          </article>
-          <article class="model-float">
-            <div class="vehicle-panel">
-              <img src="assets/models/g7s-6x4-prime-mover.png" alt="" />
-              <div class="vehicle-meta">
-                <div><span>Series</span><strong>G7</strong></div>
-                <em>Prime mover</em>
-              </div>
-            </div>
-          </article>
-          <article class="model-float">
-            <div class="vehicle-panel">
-              <img src="assets/models/c9h-6x4-prime-mover.png" alt="" />
-              <div class="vehicle-meta">
-                <div><span>Series</span><strong>C9</strong></div>
-                <em>Heavy duty</em>
-              </div>
-            </div>
-          </article>
-        </div>
-        <div class="orbit-note">floating model carousel test</div>
       </div>
     </section>
   </main>
+
+  <script>
+    const models = [
+      {
+        series: "G5 Series",
+        title: "G5S 4x2 Cargo",
+        desc: "Cargo Cab & Chassis",
+        image: "assets/models/g5s-4x2-cargo-cab-chassis.png"
+      },
+      {
+        series: "G5 Series",
+        title: "G5S 6x4 Cargo",
+        desc: "Cargo Cab & Chassis",
+        image: "assets/models/g5s-6x4-cargo-cab-chassis.png"
+      },
+      {
+        series: "G5 Series",
+        title: "G5S 8x4 Cargo",
+        desc: "Cargo Cab & Chassis",
+        image: "assets/models/g5s-8x4-cargo-cab-chassis.png"
+      },
+      {
+        series: "G5 Series",
+        title: "G5S 8x4 Mixer",
+        desc: "Mixer Cab & Chassis",
+        image: "assets/models/g5s-8x4-mixer-cab-chassis.png"
+      },
+      {
+        series: "G5 Series",
+        title: "G5S 6x4 Tipper",
+        desc: "Tipper Cab & Chassis",
+        image: "assets/models/g5s-6x4-tipper-cab-chassis.png"
+      },
+      {
+        series: "G5 Series",
+        title: "G5S 8x4 Tipper",
+        desc: "Tipper Cab & Chassis",
+        image: "assets/models/g5s-8x4-tipper-cab-chassis.png"
+      },
+      {
+        series: "G7 Series",
+        title: "G7S 6x4 Prime",
+        desc: "Prime Mover",
+        image: "assets/models/g7s-6x4-prime-mover.png"
+      },
+      {
+        series: "G7 Series",
+        title: "G7S 6x4 Tipper",
+        desc: "Tipper Cab & Chassis",
+        image: "assets/models/g7s-6x4-tipper-cab-chassis.png"
+      },
+      {
+        series: "G7 Series",
+        title: "G7S 8x4 Tipper",
+        desc: "Tipper Cab & Chassis",
+        image: "assets/models/g7s-8x4-tipper-cab-chassis.png"
+      },
+      {
+        series: "C9 Series",
+        title: "C9H 6x4 Prime",
+        desc: "Prime Mover",
+        image: "assets/models/c9h-6x4-prime-mover.png"
+      }
+    ];
+
+    const carousel = document.getElementById("carousel");
+    const dots = document.getElementById("dots");
+    const count = document.getElementById("count");
+    let active = 0;
+    let startX = 0;
+    let deltaX = 0;
+    let dragging = false;
+
+    models.forEach((model, index) => {
+      const card = document.createElement("article");
+      card.className = "model-card";
+      card.innerHTML = `
+        <img src="${model.image}" alt="${model.title}">
+        <div class="model-copy">
+          <span>${model.series}</span>
+          <strong>${model.title}</strong>
+          <p>${model.desc}</p>
+        </div>
+      `;
+      carousel.appendChild(card);
+
+      const dot = document.createElement("button");
+      dot.className = "dot";
+      dot.type = "button";
+      dot.setAttribute("aria-label", `Show ${model.title}`);
+      dot.addEventListener("click", () => {
+        active = index;
+        updateCarousel();
+      });
+      dots.appendChild(dot);
+    });
+
+    const cards = [...document.querySelectorAll(".model-card")];
+    const dotButtons = [...document.querySelectorAll(".dot")];
+
+    function wrapIndex(index) {
+      return (index + models.length) % models.length;
+    }
+
+    function shortestOffset(index) {
+      let offset = index - active;
+      const half = models.length / 2;
+      if (offset > half) offset -= models.length;
+      if (offset < -half) offset += models.length;
+      return offset;
+    }
+
+    function updateCarousel() {
+      cards.forEach((card, index) => {
+        const offset = shortestOffset(index);
+        const abs = Math.abs(offset);
+        const x = offset * 235 + deltaX;
+        const scale = Math.max(.72, 1 - abs * .13);
+        const rotate = offset * -8;
+        const opacity = abs > 3 ? 0 : Math.max(.22, 1 - abs * .26);
+        const z = 20 - abs;
+
+        card.style.transform = `translate(calc(-50% + ${x}px), -50%) scale(${scale}) rotate(${rotate}deg)`;
+        card.style.opacity = opacity;
+        card.style.zIndex = z;
+        card.style.filter = abs === 0 ? "none" : "saturate(.88)";
+        card.setAttribute("aria-hidden", abs > 0 ? "true" : "false");
+      });
+
+      dotButtons.forEach((dot, index) => {
+        dot.classList.toggle("is-active", index === active);
+      });
+      count.textContent = `${String(active + 1).padStart(2, "0")} / ${String(models.length).padStart(2, "0")}`;
+    }
+
+    function move(dir) {
+      active = wrapIndex(active + dir);
+      deltaX = 0;
+      updateCarousel();
+    }
+
+    document.querySelectorAll("[data-dir]").forEach((button) => {
+      button.addEventListener("click", () => move(Number(button.dataset.dir)));
+    });
+
+    carousel.addEventListener("pointerdown", (event) => {
+      dragging = true;
+      startX = event.clientX;
+      deltaX = 0;
+      carousel.classList.add("is-dragging");
+      carousel.setPointerCapture(event.pointerId);
+    });
+
+    carousel.addEventListener("pointermove", (event) => {
+      if (!dragging) return;
+      deltaX = event.clientX - startX;
+      updateCarousel();
+    });
+
+    carousel.addEventListener("pointerup", () => {
+      if (!dragging) return;
+      dragging = false;
+      carousel.classList.remove("is-dragging");
+      if (Math.abs(deltaX) > 72) {
+        move(deltaX < 0 ? 1 : -1);
+      } else {
+        deltaX = 0;
+        updateCarousel();
+      }
+    });
+
+    carousel.addEventListener("pointercancel", () => {
+      dragging = false;
+      deltaX = 0;
+      carousel.classList.remove("is-dragging");
+      updateCarousel();
+    });
+
+    carousel.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") move(-1);
+      if (event.key === "ArrowRight") move(1);
+    });
+
+    updateCarousel();
+  </script>
 </body>
 </html>

@@ -108,7 +108,10 @@ function applyStoredEnquiry(){
       if(option.textContent === topic || option.value === topic) topicSelect.value = option.value;
     });
   }
-  if(modelInput && model) modelInput.value = model;
+  if(modelInput){
+    modelInput.value = "";
+    modelInput.placeholder = model || "e.g. SITRAK G5S 6x4 Tipper";
+  }
 }
 
 function openModal(modelKey){
@@ -136,7 +139,7 @@ function openVideoModal(){
   modal.classList.add("is-open");
   modal.setAttribute("aria-hidden","false");
   document.body.style.overflow = "hidden";
-  if(video && typeof video.play === "function"){
+  if(video){
     video.currentTime = 0;
     video.play().catch(() => {});
   }
@@ -145,14 +148,8 @@ function openVideoModal(){
 function resetVideoModal(){
   const video = document.querySelector(".video-modal-player");
   if(!video) return;
-  if(typeof video.pause === "function"){
-    video.pause();
-    video.currentTime = 0;
-    return;
-  }
-  if(video.tagName === "IFRAME"){
-    video.src = video.src;
-  }
+  video.pause();
+  video.currentTime = 0;
 }
 
 function closeModals(){
@@ -164,127 +161,50 @@ function closeModals(){
   document.body.style.overflow = "";
 }
 
-function initSeriesCarousel(){
-  const root = document.getElementById("seriesCarousel");
-  if(!root) return;
-  const cards = Array.from(root.querySelectorAll(".carousel-card"));
-  const prevButton = root.querySelector(".carousel-arrow-prev");
-  const nextButton = root.querySelector(".carousel-arrow-next");
-  const total = cards.length;
-  if(total === 0) return;
-
-  let active = Math.min(1, total - 1);
-  let pointerDown = false;
-  let dragStartX = 0;
-  let dragDeltaX = 0;
-  let activePointerId = null;
-  let pressedCard = null;
-  const dragThreshold = 60;
-
-  function render(){
-    cards.forEach((card, index) => {
-      card.classList.remove("is-active", "is-prev", "is-next");
-      if(index === active) card.classList.add("is-active");
-      else if(index === (active - 1 + total) % total) card.classList.add("is-prev");
-      else if(index === (active + 1) % total) card.classList.add("is-next");
-      card.setAttribute("aria-hidden", index === active ? "false" : "true");
-    });
-  }
-
-  function go(index){
-    active = (index + total) % total;
-    render();
-  }
-
-  function prev(){
-    go(active - 1);
-  }
-
-  function next(){
-    go(active + 1);
-  }
-
-  function stopDragging(){
-    pointerDown = false;
-    root.classList.remove("is-dragging");
-    if(activePointerId !== null && root.hasPointerCapture?.(activePointerId)){
-      root.releasePointerCapture(activePointerId);
-    }
-    activePointerId = null;
-  }
-
-  function triggerSwipe(direction){
-    stopDragging();
-    if(direction > 0) prev();
-    else next();
-    setTimeout(() => { dragDeltaX = 0; }, 60);
-  }
-
-  prevButton?.addEventListener("click", prev);
-  nextButton?.addEventListener("click", next);
-
-  root.addEventListener("pointerdown", event => {
-    if(event.target.closest("a,button")) return;
-    pointerDown = true;
-    dragStartX = event.clientX;
-    dragDeltaX = 0;
-    activePointerId = event.pointerId;
-    pressedCard = event.target.closest(".carousel-card");
-    root.classList.add("is-dragging");
-    root.setPointerCapture?.(event.pointerId);
-  });
-
-  window.addEventListener("pointermove", event => {
-    if(!pointerDown) return;
-    dragDeltaX = event.clientX - dragStartX;
-    if(dragDeltaX > dragThreshold) triggerSwipe(1);
-    else if(dragDeltaX < -dragThreshold) triggerSwipe(-1);
-  });
-
-  function onPointerUp(){
-    if(!pointerDown){
-      pressedCard = null;
-      return;
-    }
-    const finalDelta = dragDeltaX;
-    const tappedCard = pressedCard;
-    stopDragging();
-    pressedCard = null;
-    if(finalDelta > dragThreshold) prev();
-    else if(finalDelta < -dragThreshold) next();
-    else if(tappedCard?.classList.contains("is-prev")) prev();
-    else if(tappedCard?.classList.contains("is-next")) next();
-    setTimeout(() => { dragDeltaX = 0; }, 60);
-  }
-
-  window.addEventListener("pointerup", onPointerUp);
-  window.addEventListener("pointercancel", onPointerUp);
-
-  root.tabIndex = 0;
-  root.addEventListener("keydown", event => {
-    if(event.key === "ArrowLeft"){
-      event.preventDefault();
-      prev();
-    }
-    if(event.key === "ArrowRight"){
-      event.preventDefault();
-      next();
-    }
-  });
-
-  render();
+const mobilePanel = document.querySelector(".mobile-panel");
+if(mobilePanel && !mobilePanel.querySelector(".mobile-contact")){
+  const contactLink = document.createElement("a");
+  contactLink.href = document.querySelector("#contact") ? "#contact" : "index_mobile.html#contact";
+  contactLink.textContent = "Contact Us";
+  contactLink.className = "mobile-contact";
+  mobilePanel.appendChild(contactLink);
 }
+
+function closeMobileNav(){
+  document.querySelector(".mobile-panel")?.classList.remove("is-open");
+  document.querySelectorAll(".menu-toggle").forEach(button => button.setAttribute("aria-expanded","false"));
+  document.body.classList.remove("nav-open");
+}
+
+const currentPage = window.location.pathname.split("/").pop() || "index_mobile.html";
+document.querySelectorAll(".mobile-panel a").forEach(link => {
+  const targetPage = link.getAttribute("href")?.split("#")[0] || "index_mobile.html";
+  if(!link.classList.contains("mobile-contact") && targetPage === currentPage) link.classList.add("is-active");
+});
 
 document.querySelectorAll(".menu-toggle").forEach(button => {
   button.addEventListener("click", () => {
     const panel = document.querySelector(".mobile-panel");
     const isOpen = panel.classList.toggle("is-open");
     button.setAttribute("aria-expanded", String(isOpen));
+    document.body.classList.toggle("nav-open", isOpen);
   });
 });
 
+document.querySelectorAll(".site-nav .nav-cta").forEach(link => {
+  link.addEventListener("click", closeMobileNav);
+});
+
 document.querySelectorAll(".mobile-panel a").forEach(link => {
-  link.addEventListener("click", () => document.querySelector(".mobile-panel")?.classList.remove("is-open"));
+  link.addEventListener("click", closeMobileNav);
+});
+
+document.querySelectorAll("#range .truck-card[data-mobile-href]").forEach(card => {
+  card.addEventListener("click", event => {
+    if(!window.matchMedia("(max-width:900px)").matches) return;
+    if(event.target.closest("a,button")) return;
+    window.location.href = card.dataset.mobileHref;
+  });
 });
 
 document.querySelectorAll(".js-quote").forEach(button => {
@@ -301,7 +221,7 @@ document.querySelectorAll(".js-quote").forEach(button => {
       document.querySelector(".js-form").scrollIntoView({behavior:"smooth"});
       showToast(`${topic} selected for this form.`);
     }else{
-      window.location.href = "index.html#contact";
+      window.location.href = "index_mobile.html#contact";
     }
   });
 });
@@ -312,12 +232,6 @@ document.querySelectorAll(".js-specs").forEach(button => {
 
 document.querySelectorAll(".js-video-open").forEach(button => {
   button.addEventListener("click", openVideoModal);
-  button.addEventListener("keydown", event => {
-    if(event.key === "Enter" || event.key === " "){
-      event.preventDefault();
-      openVideoModal();
-    }
-  });
 });
 
 document.querySelectorAll(".modal-close").forEach(button => button.addEventListener("click", closeModals));
@@ -326,15 +240,15 @@ document.querySelectorAll(".modal").forEach(modal => modal.addEventListener("cli
 }));
 document.addEventListener("keydown", event => {
   if(event.key === "Escape") closeModals();
+  if(event.key === "Escape") closeMobileNav();
 });
 
 document.querySelectorAll(".js-modal-quote").forEach(button => {
   button.addEventListener("click", () => {
     setEnquiry("Sales Enquiry", activeTopic);
     closeModals();
-    window.location.href = "index.html#contact";
+    window.location.href = "index_mobile.html#contact";
   });
 });
 
 applyStoredEnquiry();
-initSeriesCarousel();

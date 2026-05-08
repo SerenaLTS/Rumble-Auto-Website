@@ -100,7 +100,7 @@
               <label>Name *<input type="text" name="name" placeholder="Jane Smith" required></label>
               <label>Phone / Email *<input type="text" name="contact" placeholder="jane@email.com" required></label>
               <label>Enquiry Type
-                <select name="enquiry_type" class="js-topic">
+                <select name="enquiry_type" class="js-topic" required>
                   <option>Sales Enquiry</option>
                   <option>Service &amp; Maintenance</option>
                   <option>Parts Enquiry</option>
@@ -108,7 +108,9 @@
                   <option>General Enquiry</option>
                 </select>
               </label>
-              <label>Preferred Model / Topic<input type="text" name="preferred_model" class="js-model" placeholder="e.g. SITRAK G5S 6x4 Tipper"></label>
+              <label>Preferred Model / Topic<input type="text" name="preferred_model" class="js-model" placeholder="Preferred Model"></label>
+              <label>Preferred Service Date<input type="text" name="preferred_service_date" placeholder="Preferred Service Date"></label>
+              <label>Message *<textarea name="message" placeholder="Describe the issue, service required, or parts needed" required></textarea></label>
               <button type="submit" class="blue-pill submit-btn">SUBMIT ENQUIRY</button>
               <p class="form-status">Thanks. Your enquiry has been submitted.</p>
             </form>

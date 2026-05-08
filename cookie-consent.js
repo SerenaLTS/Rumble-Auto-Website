@@ -1,5 +1,5 @@
 (() => {
-  const STORAGE_KEY = "rumble_cookie_consent_v1";
+  const STORAGE_KEY = "rumble_cookie_consent_v2";
   const CONSENT_ACCEPTED = "accepted";
   const CONSENT_DISMISSED = "dismissed";
 
@@ -134,6 +134,7 @@
   }
 
   function buildBanner() {
+    closeBanner();
     const banner = document.createElement("div");
     banner.className = "cookie-consent";
     banner.id = "cookieConsentBanner";
@@ -184,11 +185,29 @@
     hasAnalyticsConsent() {
       return getConsentValue() === CONSENT_ACCEPTED;
     },
+    reset() {
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+      } catch (error) {
+        return;
+      }
+      initCookieConsent();
+    },
+    show() {
+      injectStyles();
+      document.body.appendChild(buildBanner());
+    },
   };
 
-  document.addEventListener("DOMContentLoaded", () => {
+  function initCookieConsent() {
     if (getConsentValue()) return;
     injectStyles();
     document.body.appendChild(buildBanner());
-  });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initCookieConsent);
+  } else {
+    initCookieConsent();
+  }
 })();

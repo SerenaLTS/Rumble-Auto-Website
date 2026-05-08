@@ -336,13 +336,5 @@ document.querySelectorAll(".js-modal-quote").forEach(button => {
   });
 });
 
-document.querySelectorAll(".js-form").forEach(form => {
-  form.addEventListener("submit", event => {
-    event.preventDefault();
-    form.querySelector(".form-status")?.classList.add("is-visible");
-    showToast("Thanks. Your enquiry has been prepared on this page.");
-  });
-});
-
 applyStoredEnquiry();
 initSeriesCarousel();

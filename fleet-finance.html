@@ -95,11 +95,11 @@
           </div>
           <div class="contact-panel">
             <h3>Submit your enquiry</h3>
-            <form class="contact-form js-form">
-              <label>Name *<input type="text" name="name" placeholder="Jane Smith" required></label>
+            <form class="contact-form js-form" id="enquiryForm">
+              <label>Name *<input type="text" name="name" placeholder="Business / Contact Name" required></label>
               <label>Phone / Email *<input type="text" name="contact" placeholder="jane@email.com" required></label>
               <label>Enquiry Type
-                <select name="topic" class="js-topic">
+                <select name="enquiry_type" class="js-topic" required>
                   <option>Sales Enquiry</option>
                   <option>Service &amp; Maintenance</option>
                   <option>Parts Enquiry</option>
@@ -107,9 +107,11 @@
                   <option>General Enquiry</option>
                 </select>
               </label>
-              <label>Preferred Model / Topic<input type="text" name="model" class="js-model" placeholder="Preferred Model"></label>
+              <label>Fleet Size<input type="text" name="fleet_size" placeholder="Fleet Size"></label>
+              <label>Preferred Model / Topic<input type="text" name="preferred_model" class="js-model" placeholder="Preferred Model / Application"></label>
+              <label>Message *<textarea name="message" placeholder="Your requirements: routes, payload, body type, finance preference" required></textarea></label>
               <button type="submit" class="blue-pill submit-btn">SUBMIT ENQUIRY</button>
-              <p class="form-status">Thanks. Your enquiry has been prepared on this page.</p>
+              <p class="form-status">Thanks. Your enquiry has been submitted.</p>
             </form>
           </div>
         </div>

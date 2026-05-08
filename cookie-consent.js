@@ -144,12 +144,13 @@
         <div class="cookie-consent__top">
           <div class="cookie-consent__copy">
             We use cookies and analytics to understand website traffic and improve your experience.
-            See our <strong>Privacy Policy</strong> for more details.
+            See our <strong>Privacy Policy</strong> and Cookie Policy for more details.
           </div>
           <button class="cookie-consent__close" type="button" aria-label="Close cookie notice">&times;</button>
         </div>
         <div class="cookie-consent__actions">
-          <a class="cookie-consent__link" href="/privacy-policy.html">Privacy Policy</a>
+          <a class="cookie-consent__link" href="privacy-policy.html">Privacy Policy</a>
+          <a class="cookie-consent__link" href="cookie-policy.html">Cookie Policy</a>
           <button class="cookie-consent__btn" type="button" data-consent="dismiss">Close</button>
           <button class="cookie-consent__btn cookie-consent__btn--primary" type="button" data-consent="accept">Accept</button>
         </div>

@@ -119,17 +119,17 @@ button{cursor:pointer}
   .models-copy{transform:none}
   .models-copy .section-title,.models-copy .section-copy{max-width:none}
   .models-copy .dark-pill{width:100%}
-  .model-carousel{width:100%;max-width:none;margin:0;padding:0 30px 34px}
-  .model-carousel .carousel-track{height:520px}
+  .model-carousel{width:100%;max-width:none;margin:0;padding:0 30px 44px}
+  .model-carousel .carousel-track{height:670px}
   .model-carousel .carousel-card{width:calc(100% - 18px);border-radius:22px}
   .model-carousel .carousel-card.is-active{transform:translate3d(-50%,-50%,92px) scale(1) rotateY(0deg)}
   .model-carousel .carousel-card.is-prev{transform:translate3d(calc(-50% - 92px),-50%,-110px) scale(.68) rotateY(22deg);opacity:.24}
   .model-carousel .carousel-card.is-next{transform:translate3d(calc(-50% + 92px),-50%,-110px) scale(.68) rotateY(-22deg);opacity:.24}
-  .model-carousel .truck-photo-wrap{height:224px}
-  .model-carousel .truck-info{padding:24px 22px}
+  .model-carousel .truck-photo-wrap{height:260px}
+  .model-carousel .truck-info{padding:24px 22px 26px}
   .model-carousel .truck-info:before{left:22px;right:22px}
   .model-carousel .truck-info h3{margin-bottom:16px;font-size:30px}
-  .model-carousel .spec-row{grid-template-columns:1fr;gap:10px}
+  .model-carousel .spec-row{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
   .model-carousel .spec-row strong{font-size:16px}
   .model-carousel .card-actions{gap:10px;padding-top:20px;flex-direction:row}
   .model-carousel .blue-pill,.model-carousel .ghost-pill{min-width:0;flex:1 1 0;padding:0 14px;font-size:12px}
@@ -172,7 +172,6 @@ button{cursor:pointer}
   .truck-info h3,.truck-side-info h4,.service-card h3,.catalog-card h3,.contact-panel h3{font-size:21px}
   .truck-desc{margin:10px 0 18px;font-size:15px;line-height:1.45}
   .spec-row{grid-template-columns:1fr;gap:12px;padding-top:18px}
-  #range .truck-desc,#range .spec-row,#range .card-actions{display:none}
   #range .truck-info{padding:16px 18px}
   .card-actions,.hero-actions,.series-model-actions,.modal-actions{align-items:stretch;flex-direction:column}
   .card-actions .blue-pill,.card-actions .ghost-pill,.hero-actions .blue-pill,.hero-actions .ghost-pill,.hero-actions .dark-pill,.hero-actions .light-pill,.series-model-actions .blue-pill,.series-model-actions .ghost-pill,.modal-actions .blue-pill,.modal-actions .ghost-pill,.model-detail-block>div:last-child .blue-pill,.model-detail-block>div:last-child .ghost-pill{width:100%}
@@ -289,6 +288,18 @@ button{cursor:pointer}
   .model-detail-hero .page-hero-copy h1{font-size:30px}
   .blue-pill,.ghost-pill,.dark-pill,.light-pill{font-size:12px;padding:0 14px}
   .circle-collage{display:none}
+}
+
+@media (max-width:560px){
+  #range .model-carousel .carousel-track{height:650px}
+  #range .model-carousel .carousel-card{width:calc(100% - 8px)}
+  #range .model-carousel .truck-photo-wrap{height:240px}
+  #range .model-carousel .truck-info h3{font-size:30px}
+  #range .model-carousel .spec-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;border-top:0;padding-top:0}
+  #range .model-carousel .spec-row span{font-size:10px;letter-spacing:.16em}
+  #range .model-carousel .spec-row strong{font-size:15px;line-height:1.22}
+  #range .model-carousel .card-actions{display:flex;flex-direction:row;gap:10px;padding-top:20px}
+  #range .model-carousel .blue-pill,#range .model-carousel .ghost-pill{width:auto;min-width:0;flex:1 1 0;min-height:48px;padding:0 10px;font-size:12px}
 }
 
 @media (max-width:900px){

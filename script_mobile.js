@@ -167,16 +167,16 @@ function closeModals(){
   document.body.style.overflow = "";
 }
 
-function initSeriesCarousel(){
-  const root = document.getElementById("seriesCarousel");
-  if(!root) return;
+function initCarousel(root){
+  if(!root || root.dataset.carouselReady === "true") return;
+  root.dataset.carouselReady = "true";
   const cards = Array.from(root.querySelectorAll(".carousel-card"));
   const prevButton = root.querySelector(".carousel-arrow-prev");
   const nextButton = root.querySelector(".carousel-arrow-next");
   const total = cards.length;
   if(total === 0) return;
 
-  let active = Math.min(1, total - 1);
+  let active = Math.min(root.id === "seriesCarousel" ? 1 : 0, total - 1);
   let pointerDown = false;
   let dragStartX = 0;
   let dragDeltaX = 0;
@@ -185,11 +185,15 @@ function initSeriesCarousel(){
   const dragThreshold = 60;
 
   function render(){
+    const isStatic = total < 2;
+    root.classList.toggle("is-static", isStatic);
+    if(prevButton) prevButton.disabled = isStatic;
+    if(nextButton) nextButton.disabled = isStatic;
     cards.forEach((card, index) => {
       card.classList.remove("is-active", "is-prev", "is-next");
       if(index === active) card.classList.add("is-active");
-      else if(index === (active - 1 + total) % total) card.classList.add("is-prev");
-      else if(index === (active + 1) % total) card.classList.add("is-next");
+      else if(!isStatic && index === (active - 1 + total) % total) card.classList.add("is-prev");
+      else if(!isStatic && index === (active + 1) % total) card.classList.add("is-next");
       card.setAttribute("aria-hidden", index === active ? "false" : "true");
     });
   }
@@ -278,56 +282,8 @@ function initSeriesCarousel(){
   render();
 }
 
-function initModelCatalogSliders(){
-  document.querySelectorAll(".models-page-hero ~ .page-section .catalog-grid").forEach((track, index) => {
-    if(track.closest(".catalog-slider")) return;
-
-    const slider = document.createElement("div");
-    slider.className = "catalog-slider";
-    slider.setAttribute("role", "region");
-    slider.setAttribute("aria-label", `Model cards slider ${index + 1}`);
-    track.parentNode.insertBefore(slider, track);
-    slider.appendChild(track);
-
-    const prevButton = document.createElement("button");
-    prevButton.type = "button";
-    prevButton.className = "model-scroll-arrow model-scroll-arrow-prev";
-    prevButton.setAttribute("aria-label", "Show previous model");
-    prevButton.innerHTML = "<span aria-hidden=\"true\">‹</span>";
-
-    const nextButton = document.createElement("button");
-    nextButton.type = "button";
-    nextButton.className = "model-scroll-arrow model-scroll-arrow-next";
-    nextButton.setAttribute("aria-label", "Show next model");
-    nextButton.innerHTML = "<span aria-hidden=\"true\">›</span>";
-
-    slider.append(prevButton, nextButton);
-
-    function cardStep(){
-      const card = track.querySelector(".catalog-card");
-      if(!card) return Math.round(track.clientWidth * 0.86);
-      const gap = parseFloat(window.getComputedStyle(track).gap) || 16;
-      return Math.round(card.getBoundingClientRect().width + gap);
-    }
-
-    function updateButtons(){
-      const maxScroll = track.scrollWidth - track.clientWidth;
-      const isStatic = maxScroll <= 4;
-      slider.classList.toggle("is-static", isStatic);
-      prevButton.disabled = isStatic || track.scrollLeft <= 4;
-      nextButton.disabled = isStatic || track.scrollLeft >= maxScroll - 4;
-    }
-
-    function scrollCards(direction){
-      track.scrollBy({left: direction * cardStep(), behavior: "smooth"});
-    }
-
-    prevButton.addEventListener("click", () => scrollCards(-1));
-    nextButton.addEventListener("click", () => scrollCards(1));
-    track.addEventListener("scroll", updateButtons, {passive: true});
-    window.addEventListener("resize", updateButtons);
-    requestAnimationFrame(updateButtons);
-  });
+function initSeriesCarousel(){
+  document.querySelectorAll(".model-carousel").forEach(initCarousel);
 }
 
 const mobilePanel = document.querySelector(".mobile-panel");
@@ -422,4 +378,3 @@ document.querySelectorAll(".js-modal-quote").forEach(button => {
 
 applyStoredEnquiry();
 initSeriesCarousel();
-initModelCatalogSliders();

@@ -36,6 +36,10 @@ npm-debug.log*
 !assets/logo-dark.png
 !assets/favicon.png
 
+# Model images - kept in GitHub Pages for model and spec pages
+!assets/models/
+!assets/models/*.png
+
 # PDF brochures - kept in GitHub Pages so live previews can download them
 !assets/brochures/
 !assets/brochures/*.pdf

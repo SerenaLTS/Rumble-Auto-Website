@@ -278,6 +278,58 @@ function initSeriesCarousel(){
   render();
 }
 
+function initModelCatalogSliders(){
+  document.querySelectorAll(".models-page-hero ~ .page-section .catalog-grid").forEach((track, index) => {
+    if(track.closest(".catalog-slider")) return;
+
+    const slider = document.createElement("div");
+    slider.className = "catalog-slider";
+    slider.setAttribute("role", "region");
+    slider.setAttribute("aria-label", `Model cards slider ${index + 1}`);
+    track.parentNode.insertBefore(slider, track);
+    slider.appendChild(track);
+
+    const prevButton = document.createElement("button");
+    prevButton.type = "button";
+    prevButton.className = "model-scroll-arrow model-scroll-arrow-prev";
+    prevButton.setAttribute("aria-label", "Show previous model");
+    prevButton.innerHTML = "<span aria-hidden=\"true\">‹</span>";
+
+    const nextButton = document.createElement("button");
+    nextButton.type = "button";
+    nextButton.className = "model-scroll-arrow model-scroll-arrow-next";
+    nextButton.setAttribute("aria-label", "Show next model");
+    nextButton.innerHTML = "<span aria-hidden=\"true\">›</span>";
+
+    slider.append(prevButton, nextButton);
+
+    function cardStep(){
+      const card = track.querySelector(".catalog-card");
+      if(!card) return Math.round(track.clientWidth * 0.86);
+      const gap = parseFloat(window.getComputedStyle(track).gap) || 16;
+      return Math.round(card.getBoundingClientRect().width + gap);
+    }
+
+    function updateButtons(){
+      const maxScroll = track.scrollWidth - track.clientWidth;
+      const isStatic = maxScroll <= 4;
+      slider.classList.toggle("is-static", isStatic);
+      prevButton.disabled = isStatic || track.scrollLeft <= 4;
+      nextButton.disabled = isStatic || track.scrollLeft >= maxScroll - 4;
+    }
+
+    function scrollCards(direction){
+      track.scrollBy({left: direction * cardStep(), behavior: "smooth"});
+    }
+
+    prevButton.addEventListener("click", () => scrollCards(-1));
+    nextButton.addEventListener("click", () => scrollCards(1));
+    track.addEventListener("scroll", updateButtons, {passive: true});
+    window.addEventListener("resize", updateButtons);
+    requestAnimationFrame(updateButtons);
+  });
+}
+
 const mobilePanel = document.querySelector(".mobile-panel");
 if(mobilePanel && !mobilePanel.querySelector(".mobile-contact")){
   const contactLink = document.createElement("a");
@@ -370,3 +422,4 @@ document.querySelectorAll(".js-modal-quote").forEach(button => {
 
 applyStoredEnquiry();
 initSeriesCarousel();
+initModelCatalogSliders();

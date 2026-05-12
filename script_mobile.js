@@ -139,7 +139,7 @@ function openVideoModal(){
   modal.classList.add("is-open");
   modal.setAttribute("aria-hidden","false");
   document.body.style.overflow = "hidden";
-  if(video){
+  if(video && typeof video.play === "function"){
     video.currentTime = 0;
     video.play().catch(() => {});
   }
@@ -148,8 +148,14 @@ function openVideoModal(){
 function resetVideoModal(){
   const video = document.querySelector(".video-modal-player");
   if(!video) return;
-  video.pause();
-  video.currentTime = 0;
+  if(typeof video.pause === "function"){
+    video.pause();
+    video.currentTime = 0;
+    return;
+  }
+  if(video.tagName === "IFRAME"){
+    video.src = video.src;
+  }
 }
 
 function closeModals(){

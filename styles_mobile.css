@@ -148,14 +148,14 @@ button{cursor:pointer}
   .hero-actions,.card-actions,.series-model-actions,.modal-actions,.model-detail-block>div:last-child{gap:10px}
   .hero-actions .blue-pill .button-dot{width:28px;height:28px;margin-left:8px;margin-right:-8px;font-size:15px}
 
-  .hero{min-height:720px;border-radius:0;padding:118px 16px 26px;display:flex;flex-direction:column;justify-content:flex-end}
-  .hero-bg{object-position:58% center}
-  .hero-overlay{background:linear-gradient(180deg,rgba(5,8,14,.3),rgba(5,8,14,.72) 58%,rgba(5,8,14,.86))}
+  .hero{min-height:650px;border-radius:0;padding:104px 16px 24px;display:flex;flex-direction:column;justify-content:flex-end}
+  .hero-bg{object-position:54% center}
+  .hero-overlay{background:linear-gradient(180deg,rgba(5,8,14,.26),rgba(5,8,14,.66) 54%,rgba(5,8,14,.86))}
   .hero-copy{padding:0;max-width:none;width:100%}
   .hero-brand-title{font-size:44px!important;line-height:1.02!important;letter-spacing:0!important}
-  .hero-brand-copy{margin-top:16px!important;font-size:16px!important;line-height:1.48!important}
+  .hero-brand-copy{margin-top:14px!important;font-size:16px!important;line-height:1.42!important}
   .hero-copy p{font-size:16px;line-height:1.45}
-  .hero-actions{margin-top:22px}
+  .hero-actions{margin-top:18px}
   .hero-stats{width:100%!important;margin:24px 0 0;grid-template-columns:1fr;gap:8px}
   #home .hero-stats{display:none}
   .hero-stat{border-radius:8px;padding:14px 16px}
@@ -293,7 +293,7 @@ button{cursor:pointer}
 @media (max-width:380px){
   .section,.section-head,.model-grid,.models-showcase,.contact-grid,.footer-shell,.page-hero-copy{width:calc(100% - 24px)!important}
   .site-nav{left:10px;right:10px}
-  .hero{padding-left:12px;padding-right:12px;min-height:700px}
+  .hero{padding-left:12px;padding-right:12px;min-height:630px}
   .hero-brand-title{font-size:38px!important}
   .section-title{font-size:27px}
   .page-hero-copy h1{font-size:32px}

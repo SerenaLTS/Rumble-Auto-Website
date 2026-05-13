@@ -318,18 +318,18 @@ button{cursor:pointer}
 }
 
 @media (max-width:900px){
-  .model-detail-hero{min-height:780px}
-  .model-detail-hero:after{height:28%;clip-path:polygon(0 30%,100% 10%,100% 100%,0 100%)}
-  .model-detail-hero .page-hero-bg{right:-12vw;bottom:18px;width:min(96vw,680px);max-height:36%;transform:none}
-  .model-detail-hero .page-hero-overlay{background:linear-gradient(180deg,rgba(5,8,14,.68),rgba(5,8,14,.58) 46%,rgba(5,8,14,.18) 72%,rgba(5,8,14,0))}
-  .model-detail-hero .page-hero-copy{padding-top:122px;padding-bottom:260px}
+  .model-detail-hero{min-height:auto;padding:88px 16px 42px;display:flex;flex-direction:column;gap:22px}
+  .model-detail-hero:after{height:22%;clip-path:polygon(0 42%,100% 18%,100% 100%,0 100%)}
+  .model-detail-hero .page-hero-bg{position:relative;inset:auto;z-index:4;width:100%;height:clamp(260px,58vw,390px);max-height:none;object-fit:contain;object-position:center;margin:0 auto;transform:none}
+  .model-detail-hero .page-hero-overlay{background:linear-gradient(180deg,rgba(5,8,14,.28),rgba(5,8,14,.58) 46%,rgba(5,8,14,.82))}
+  .model-detail-hero .page-hero-copy{padding-top:0;padding-bottom:0}
   .model-detail-hero .page-hero-copy h1,.model-detail-hero .page-hero-copy p{max-width:560px}
 }
 @media (max-width:560px){
-  .model-detail-hero{min-height:820px}
-  .model-detail-hero .page-hero-bg{right:-20vw;bottom:12px;width:116vw;max-height:33%}
-  .model-detail-hero .page-hero-copy{padding-bottom:250px}
-  .model-detail-hero .page-hero-copy{width:calc(100vw - 32px)!important;max-width:none;margin-left:16px!important;margin-right:16px!important;overflow:hidden}
+  .model-detail-hero{min-height:auto;padding:84px 16px 38px;gap:18px}
+  .model-detail-hero .page-hero-bg{width:100%;height:clamp(230px,68vw,300px);max-height:none}
+  .model-detail-hero .page-hero-copy{padding-bottom:0}
+  .model-detail-hero .page-hero-copy{width:calc(100vw - 32px)!important;max-width:none;margin-left:0!important;margin-right:0!important;overflow:hidden}
   .model-detail-hero .page-hero-copy h1,.model-detail-hero .page-hero-copy p{width:100%;max-width:calc(100vw - 32px);overflow-wrap:anywhere}
   .model-detail-hero .hero-actions{width:100%}
 }

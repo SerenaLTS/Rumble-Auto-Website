@@ -34,7 +34,9 @@ npm-debug.log*
 # Brand assets - kept in GitHub Pages for logo and favicon
 !assets/logo-light.png
 !assets/logo-dark.png
+!assets/logo-nav.png
 !assets/favicon.png
+!assets/promotion-poster.png
 
 # Model images - kept in GitHub Pages for model and spec pages
 !assets/models/

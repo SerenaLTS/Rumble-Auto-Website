@@ -55,6 +55,7 @@
 
     const overlay = injectPromo();
     const closeBtn = overlay.querySelector("#promoClose");
+    const posterLink = overlay.querySelector(".promo-poster-link");
 
     function openPromo(){
       overlay.classList.add("is-open");
@@ -72,6 +73,7 @@
     setTimeout(openPromo, 400);
 
     closeBtn.addEventListener("click", closePromo);
+    posterLink.addEventListener("click", closePromo);
     overlay.addEventListener("click", function(event){
       if(event.target === overlay) closePromo();
     });

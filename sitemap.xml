@@ -21,6 +21,11 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.rumbleauto.com.au/news1.html</loc>
+    <lastmod>2026-05-20</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.rumbleauto.com.au/g5s-4x2-cargo-cab-chassis.html</loc>
     <lastmod>2026-05-13</lastmod>
     <priority>0.7</priority>

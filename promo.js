@@ -21,10 +21,10 @@
     }
 
     if(path.includes("_mobile.html")){
-      return "index_mobile.html#contact";
+      return "/#contact";
     }
 
-    return "index.html#contact";
+    return "/#contact";
   }
 
   function injectPromo(){

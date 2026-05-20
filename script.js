@@ -307,7 +307,7 @@ document.querySelectorAll(".js-quote").forEach(button => {
       document.querySelector(".js-form").scrollIntoView({behavior:"smooth"});
       showToast(`${topic} selected for this form.`);
     }else{
-      window.location.href = "index.html#contact";
+      window.location.href = "/#contact";
     }
   });
 });
@@ -338,7 +338,7 @@ document.querySelectorAll(".js-modal-quote").forEach(button => {
   button.addEventListener("click", () => {
     setEnquiry("Sales Enquiry", activeTopic);
     closeModals();
-    window.location.href = "index.html#contact";
+    window.location.href = "/#contact";
   });
 });
 

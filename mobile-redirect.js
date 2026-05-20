@@ -3,10 +3,10 @@
   const DESKTOP_MIN_WIDTH = 1024;
 
   const desktopToMobile = {
-    "index.html": "index_mobile.html",
     "models.html": "models_mobile.html",
     "services.html": "services_mobile.html",
     "fleet-finance.html": "fleet-finance_mobile.html",
+    "news1.html": "news1_mobile.html",
     "g5s-4x2-cargo-cab-chassis.html": "g5s-4x2-cargo-cab-chassis_mobile.html",
     "g5s-6x4-cargo-cab-chassis.html": "g5s-6x4-cargo-cab-chassis_mobile.html",
     "g5s-8x4-cargo-cab-chassis.html": "g5s-8x4-cargo-cab-chassis_mobile.html",
@@ -31,10 +31,6 @@
   const currentFile = pathname.split("/").pop() || "index.html";
   const currentPage = currentFile || "index.html";
   const isRootIndex = pathname.endsWith("/");
-
-  if(isRootIndex && !desktopToMobile[currentPage]){
-    desktopToMobile[currentPage] = "index_mobile.html";
-  }
 
   function isMobileDevice(){
     const ua = navigator.userAgent || "";

@@ -289,7 +289,7 @@ function initSeriesCarousel(){
 const mobilePanel = document.querySelector(".mobile-panel");
 if(mobilePanel && !mobilePanel.querySelector(".mobile-contact")){
   const contactLink = document.createElement("a");
-  contactLink.href = document.querySelector("#contact") ? "#contact" : "index_mobile.html#contact";
+  contactLink.href = document.querySelector("#contact") ? "#contact" : "/#contact";
   contactLink.textContent = "Contact Us";
   contactLink.className = "mobile-contact";
   mobilePanel.appendChild(contactLink);
@@ -301,9 +301,9 @@ function closeMobileNav(){
   document.body.classList.remove("nav-open");
 }
 
-const currentPage = window.location.pathname.split("/").pop() || "index_mobile.html";
+const currentPage = window.location.pathname.split("/").pop() || "/";
 document.querySelectorAll(".mobile-panel a").forEach(link => {
-  const targetPage = link.getAttribute("href")?.split("#")[0] || "index_mobile.html";
+  const targetPage = link.getAttribute("href")?.split("#")[0] || "/";
   if(!link.classList.contains("mobile-contact") && targetPage === currentPage) link.classList.add("is-active");
 });
 
@@ -352,7 +352,7 @@ document.querySelectorAll(".js-quote").forEach(button => {
       document.querySelector(".js-form").scrollIntoView({behavior:"smooth"});
       showToast(`${topic} selected for this form.`);
     }else{
-      window.location.href = "index_mobile.html#contact";
+      window.location.href = "/#contact";
     }
   });
 });
@@ -378,7 +378,7 @@ document.querySelectorAll(".js-modal-quote").forEach(button => {
   button.addEventListener("click", () => {
     setEnquiry("Sales Enquiry", activeTopic);
     closeModals();
-    window.location.href = "index_mobile.html#contact";
+    window.location.href = "/#contact";
   });
 });
 

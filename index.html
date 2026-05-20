@@ -14,7 +14,11 @@
   <title>SITRAK Trucks Sydney NSW Dealer | RUMBLE Auto</title>
   <meta name="description" content="SITRAK is a nationwide truck brand with dealers across NSW, VIC, QLD, SA, WA, TAS and NT, excluding ACT. RUMBLE Auto is a NSW SITRAK dealer based in the Sydney area, supporting truck sales, service and fleet enquiries from Arndell Park." />
   <link rel="canonical" href="https://www.rumbleauto.com.au/" />
-  <link rel="alternate" media="only screen and (max-width: 768px)" href="https://www.rumbleauto.com.au/index_mobile.html" />
+  <script>
+    if(/\/index(?:_mobile)?\.html$/.test(window.location.pathname)){
+      window.location.replace("/" + window.location.search + window.location.hash);
+    }
+  </script>
   <link rel="stylesheet" href="styles.css" />
   <link rel="icon" type="image/png" href="assets/favicon.png" />
   <link rel="apple-touch-icon" href="assets/favicon.png" />
@@ -27,11 +31,11 @@
   <!-- End Google Tag Manager (noscript) -->
   <div class="page-shell">
     <header class="site-nav">
-      <a href="index.html" class="brand-wrap" aria-label="RUMBLE Auto home">
+      <a href="/" class="brand-wrap" aria-label="RUMBLE Auto home">
         <img src="https://www.rumbleauto.com.au/assets/logo-nav.png?v=20260513" onerror="this.onerror=null;this.src='https://www.rumbleauto.com.au/assets/logo-light.png?v=20260513'" alt="RUMBLE Auto logo" class="brand-logo" />
       </a>
       <nav class="nav-links" aria-label="Primary navigation">
-        <a href="index.html" class="is-active">Home</a>
+        <a href="/" class="is-active">Home</a>
         <a href="models.html">Models</a>
         <a href="services.html">Services</a>
         <a href="fleet-finance.html">Fleet &amp; Finance</a>
@@ -41,7 +45,7 @@
     </header>
 
     <nav class="mobile-panel" aria-label="Mobile navigation">
-      <a href="index.html">Home</a>
+      <a href="/">Home</a>
       <a href="models.html">Models</a>
       <a href="services.html">Services</a>
       <a href="fleet-finance.html">Fleet &amp; Finance</a>
@@ -271,7 +275,7 @@
           </div>
           <nav class="footer-column" aria-label="Footer pages">
             <h3>Pages</h3>
-            <a href="index.html">Home</a>
+            <a href="/">Home</a>
             <a href="models.html">Models</a>
             <a href="services.html">Services</a>
             <a href="fleet-finance.html">Fleet &amp; Finance</a>
@@ -307,7 +311,7 @@
           <nav class="footer-legal" aria-label="Legal links">
             <a href="privacy-policy.html">Privacy Policy</a>
             <a href="cookie-policy.html">Cookie Policy</a>
-            <a href="index.html#contact">Legal</a>
+            <a href="/#contact">Legal</a>
             <a href="sitemap.html">Sitemap</a>
           </nav>
         </div>

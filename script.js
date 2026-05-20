@@ -287,6 +287,12 @@ document.querySelectorAll(".mobile-panel a").forEach(link => {
   link.addEventListener("click", () => document.querySelector(".mobile-panel")?.classList.remove("is-open"));
 });
 
+document.querySelectorAll(".news-float-close").forEach(button => {
+  button.addEventListener("click", () => {
+    button.closest(".news-float")?.classList.add("is-hidden");
+  });
+});
+
 document.querySelectorAll(".js-quote").forEach(button => {
   button.addEventListener("click", () => {
     const topic = button.dataset.topic || "General Enquiry";

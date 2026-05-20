@@ -324,6 +324,12 @@ document.querySelectorAll(".mobile-panel a").forEach(link => {
   link.addEventListener("click", closeMobileNav);
 });
 
+document.querySelectorAll(".news-float-close").forEach(button => {
+  button.addEventListener("click", () => {
+    button.closest(".news-float")?.classList.add("is-hidden");
+  });
+});
+
 document.querySelectorAll("#range .truck-card[data-mobile-href]").forEach(card => {
   card.addEventListener("click", event => {
     if(!window.matchMedia("(max-width:900px)").matches) return;

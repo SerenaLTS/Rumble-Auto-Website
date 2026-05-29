@@ -1,4 +1,5 @@
 const API_URL = "https://api.rumbleauto.com.au";
+const DUPLICATE_WINDOW_MS = 30000;
 
 document.addEventListener("DOMContentLoaded", () => {
   const forms = document.querySelectorAll("form.js-form, form#enquiryForm");
@@ -14,14 +15,20 @@ document.addEventListener("DOMContentLoaded", () => {
       const status = form.querySelector(".form-status");
       const submitButton = form.querySelector("[type='submit']");
       const originalButtonText = submitButton?.textContent || "";
+      const payload = buildPayload(form);
+      const fingerprint = getSubmissionFingerprint(payload);
 
+      if(form.dataset.enquirySubmitting === "true" || isRecentDuplicate(fingerprint)){
+        setStatus(status, "Your enquiry is already being submitted.", true, false);
+        return;
+      }
+
+      form.dataset.enquirySubmitting = "true";
       setStatus(status, "Sending your enquiry...", true, false);
       if(submitButton){
         submitButton.disabled = true;
         submitButton.textContent = "SENDING...";
       }
-
-      const payload = buildPayload(form);
 
       try{
         const response = await fetch(API_URL, {
@@ -37,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         setStatus(status, "Thanks. Your enquiry has been submitted.", true, false);
         if(typeof showToast === "function") showToast("Thanks. Your enquiry has been submitted.");
+        rememberSubmission(fingerprint);
         trackLead(payload);
         form.reset();
       }catch(error){
@@ -44,6 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setStatus(status, "Sorry, your enquiry could not be sent. Please call or email us directly.", true, true);
         if(typeof showToast === "function") showToast("Enquiry failed. Please call or email us directly.");
       }finally{
+        form.dataset.enquirySubmitting = "false";
         if(submitButton){
           submitButton.disabled = false;
           submitButton.textContent = originalButtonText;
@@ -63,6 +72,7 @@ function buildPayload(form){
   payload.page = window.location.href;
   payload.page_title = document.title;
   payload.submitted_at = new Date().toISOString();
+  payload.idempotency_key = createIdempotencyKey(payload);
 
   delete payload.topic;
   delete payload.model;
@@ -75,6 +85,46 @@ function setStatus(status, message, visible, isError){
   status.textContent = message;
   status.classList.toggle("is-visible", visible);
   status.classList.toggle("is-error", isError);
+}
+
+function getSubmissionFingerprint(payload){
+  return [
+    payload.name || "",
+    payload.contact || "",
+    payload.enquiry_type || "",
+    payload.preferred_model || "",
+    payload.message || "",
+    payload.page || "",
+  ].map(value => String(value).trim().toLowerCase()).join("|");
+}
+
+function isRecentDuplicate(fingerprint){
+  try{
+    const record = JSON.parse(sessionStorage.getItem("rumble_last_enquiry") || "{}");
+    return record.fingerprint === fingerprint && Date.now() - Number(record.timestamp || 0) < DUPLICATE_WINDOW_MS;
+  }catch(error){
+    return false;
+  }
+}
+
+function rememberSubmission(fingerprint){
+  try{
+    sessionStorage.setItem("rumble_last_enquiry", JSON.stringify({
+      fingerprint,
+      timestamp: Date.now(),
+    }));
+  }catch(error){
+    return;
+  }
+}
+
+function createIdempotencyKey(payload){
+  const source = getSubmissionFingerprint(payload);
+  let hash = 0;
+  for(let index = 0; index < source.length; index += 1){
+    hash = ((hash << 5) - hash + source.charCodeAt(index)) | 0;
+  }
+  return `${Date.now().toString(36)}-${Math.abs(hash).toString(36)}`;
 }
 
 function trackLead(payload){

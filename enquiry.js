@@ -37,12 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         setStatus(status, "Thanks. Your enquiry has been submitted.", true, false);
         if(typeof showToast === "function") showToast("Thanks. Your enquiry has been submitted.");
-        if(window.rumbleAnalytics){
-          window.rumbleAnalytics.trackLead({
-            enquiry_type: payload.enquiry_type || "unknown",
-            preferred_model: payload.preferred_model || "",
-          });
-        }
+        trackLead(payload);
         form.reset();
       }catch(error){
         console.error("Enquiry submit failed:", error);
@@ -80,4 +75,22 @@ function setStatus(status, message, visible, isError){
   status.textContent = message;
   status.classList.toggle("is-visible", visible);
   status.classList.toggle("is-error", isError);
+}
+
+function trackLead(payload){
+  const leadData = {
+    enquiry_type: payload.enquiry_type || "unknown",
+    preferred_model: payload.preferred_model || "",
+    page: payload.page || window.location.href,
+  };
+
+  if(window.rumbleAnalytics && typeof window.rumbleAnalytics.trackLead === "function"){
+    window.rumbleAnalytics.trackLead(leadData);
+  }
+
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    event: "rumble_lead_submit",
+    ...leadData,
+  });
 }

@@ -10,7 +10,7 @@ const CONFIG = {
   // 根据环境选择CDN地址
   CDN_BASE_URL: ['localhost', '127.0.0.1'].includes(window.location.hostname) || window.location.hostname.endsWith('.github.io')
     ? '/assets' // 本地开发
-    : 'https://your-cloudflare-cdn.com/assets', // 生产环境 - 改为你的Cloudflare URL
+    : '/assets', // 生产环境默认使用当前站点资源路径
 
   // 资源路径映射
   ASSETS: {
@@ -18,28 +18,23 @@ const CONFIG = {
     logo: 'logo-light.png',
     
     // 大图片
-    heroTruck: 'hero-truck.png',
-    truckSide: 'truck-side.png',
-    truckRoad: 'truck-road.png',
-    techTablet: 'tech-tablet.png',
+    heroTruck: 'models-webp/g7s-6x4-prime-mover.webp',
+    truckSide: 'models-webp/g5s-6x4-cargo-cab-chassis.webp',
+    truckRoad: 'model-scenes/industrial-road.svg',
+    techTablet: 'promotion-poster.png',
     
-    // 模型图片（AVIF格式）
+    // 模型图片
     models: {
-      g5s4x2Cargo: 'models/g5s-4x2-cargo-cab-chassis.avif',
-      g5s6x4Cargo: 'models/g5s-6x4-cargo-cab-chassis.avif',
-      g5s6x4Tipper: 'models/g5s-6x4-tipper-cab-chassis.avif',
-      g5s8x4Cargo: 'models/g5s-8x4-cargo-cab-chassis.avif',
-      g5s8x4Mixer: 'models/g5s-8x4-mixer-cab-chassis.avif',
-      g5s8x4Tipper: 'models/g5s-8x4-tipper-cab-chassis.avif',
-      g7s6x4Prime: 'models/g7s-6x4-prime-mover.avif',
-      g7s6x4Tipper: 'models/g7s-6x4-tipper-cab-chassis.avif',
-      g7s8x4Tipper: 'models/g7s-8x4-tipper-cab-chassis.avif',
-      c9h6x4Prime: 'models/c9h-6x4-prime-mover.avif',
-    },
-    
-    // 视频（存储在Cloudflare）
-    videos: {
-      sortPr: 'videos/sort-pr-video.mp4',
+      g5s4x2Cargo: 'models-webp/g5s-4x2-cargo-cab-chassis.webp',
+      g5s6x4Cargo: 'models-webp/g5s-6x4-cargo-cab-chassis.webp',
+      g5s6x4Tipper: 'models-webp/g5s-6x4-tipper-cab-chassis.webp',
+      g5s8x4Cargo: 'models-webp/g5s-8x4-cargo-cab-chassis.webp',
+      g5s8x4Mixer: 'models-webp/g5s-8x4-mixer-cab-chassis.webp',
+      g5s8x4Tipper: 'models-webp/g5s-8x4-tipper-cab-chassis.webp',
+      g7s6x4Prime: 'models-webp/g7s-6x4-prime-mover.webp',
+      g7s6x4Tipper: 'models-webp/g7s-6x4-tipper-cab-chassis.webp',
+      g7s8x4Tipper: 'models-webp/g7s-8x4-tipper-cab-chassis.webp',
+      c9h6x4Prime: 'models-webp/c9h-6x4-prime-mover.webp',
     },
     
     // PDF手册
@@ -64,7 +59,11 @@ const CONFIG = {
    * @returns {string} 完整URL
    */
   getAssetUrl(path) {
-    return `${this.CDN_BASE_URL}/${path}`;
+    const cleanPath = String(path || "")
+      .replace(/^\/+/, "")
+      .replace(/^assets\//, "");
+    const cleanBase = this.CDN_BASE_URL.replace(/\/+$/, "");
+    return `${cleanBase}/${cleanPath}`;
   },
 
   /**

@@ -3,6 +3,7 @@
   const DESKTOP_MIN_WIDTH = 1024;
 
   const desktopToMobile = {
+    "index.html": "index_mobile.html",
     "models.html": "models_mobile.html",
     "services.html": "services_mobile.html",
     "fleet-finance.html": "fleet-finance_mobile.html",
@@ -24,6 +25,24 @@
   const mobileToDesktop = Object.fromEntries(
     Object.entries(desktopToMobile).map(([desktop, mobile]) => [mobile, desktop])
   );
+
+  Object.assign(mobileToDesktop, {
+    "mobile_index.html": "index.html",
+    "mobile_models.html": "models.html",
+    "mobile_services.html": "services.html",
+    "mobile_fleet-finance.html": "fleet-finance.html",
+    "mobile_contact.html": "contact.html",
+    "mobile_g5s-4x2-cargo-cab-chassis.html": "g5s-4x2-cargo-cab-chassis.html",
+    "mobile_g5s-6x4-cargo-cab-chassis.html": "g5s-6x4-cargo-cab-chassis.html",
+    "mobile_g5s-8x4-cargo-cab-chassis.html": "g5s-8x4-cargo-cab-chassis.html",
+    "mobile_g5s-8x4-mixer-cab-chassis.html": "g5s-8x4-mixer-cab-chassis.html",
+    "mobile_g5s-6x4-tipper-cab-chassis.html": "g5s-6x4-tipper-cab-chassis.html",
+    "mobile_g5s-8x4-tipper-cab-chassis.html": "g5s-8x4-tipper-cab-chassis.html",
+    "mobile_g7s-6x4-prime-mover.html": "g7s-6x4-prime-mover.html",
+    "mobile_g7s-6x4-tipper-cab-chassis.html": "g7s-6x4-tipper-cab-chassis.html",
+    "mobile_g7s-8x4-tipper-cab-chassis.html": "g7s-8x4-tipper-cab-chassis.html",
+    "mobile_c9h-6x4-prime-mover.html": "c9h-6x4-prime-mover.html"
+  });
 
   const params = new URLSearchParams(window.location.search);
   const forcedView = params.get("view");

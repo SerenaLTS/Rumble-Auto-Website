@@ -20,6 +20,17 @@
   }
 
   function dispatchConsentEvent(value) {
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){
+      window.dataLayer.push(arguments);
+    }
+    gtag("consent", "update", {
+      analytics_storage: value === CONSENT_ACCEPTED ? "granted" : "denied",
+      ad_storage: "denied",
+      ad_user_data: "denied",
+      ad_personalization: "denied",
+    });
+
     window.dispatchEvent(
       new CustomEvent("rumble-cookie-consent", {
         detail: { value },

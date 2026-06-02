@@ -1,5 +1,6 @@
 const API_URL = "https://api.rumbleauto.com.au";
 const DUPLICATE_WINDOW_MS = 30000;
+const MIN_SUBMIT_MS = 1200;
 
 document.addEventListener("DOMContentLoaded", () => {
   const forms = document.querySelectorAll("form.js-form, form#enquiryForm");
@@ -8,6 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
   uniqueForms.forEach(form => {
     if(form.dataset.enquiryReady === "true") return;
     form.dataset.enquiryReady = "true";
+    form.dataset.enquiryStartedAt = String(Date.now());
+    addHoneypotField(form);
 
     form.addEventListener("submit", async event => {
       event.preventDefault();
@@ -17,6 +20,16 @@ document.addEventListener("DOMContentLoaded", () => {
       const originalButtonText = submitButton?.textContent || "";
       const payload = buildPayload(form);
       const fingerprint = getSubmissionFingerprint(payload);
+
+      if(isLikelyBot(form)){
+        setStatus(status, "Sorry, your enquiry could not be sent. Please call or email us directly.", true, true);
+        return;
+      }
+
+      if(!isValidContact(payload.contact)){
+        setStatus(status, "Please enter a valid phone number or email address.", true, true);
+        return;
+      }
 
       if(form.dataset.enquirySubmitting === "true" || isRecentDuplicate(fingerprint)){
         setStatus(status, "Your enquiry is already being submitted.", true, false);
@@ -62,6 +75,20 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+function addHoneypotField(form){
+  if(form.querySelector("[name='company_website']")) return;
+
+  const wrapper = document.createElement("div");
+  wrapper.setAttribute("aria-hidden", "true");
+  wrapper.style.position = "absolute";
+  wrapper.style.left = "-9999px";
+  wrapper.style.width = "1px";
+  wrapper.style.height = "1px";
+  wrapper.style.overflow = "hidden";
+  wrapper.innerHTML = '<label>Company website<input type="text" name="company_website" tabindex="-1" autocomplete="off"></label>';
+  form.appendChild(wrapper);
+}
+
 function buildPayload(form){
   const formData = new FormData(form);
   const payload = Object.fromEntries(formData.entries());
@@ -76,8 +103,23 @@ function buildPayload(form){
 
   delete payload.topic;
   delete payload.model;
+  delete payload.company_website;
 
   return payload;
+}
+
+function isLikelyBot(form){
+  const honeypot = form.querySelector("[name='company_website']");
+  const startedAt = Number(form.dataset.enquiryStartedAt || 0);
+  const submittedTooFast = Date.now() - startedAt < MIN_SUBMIT_MS;
+  return Boolean(honeypot?.value || submittedTooFast);
+}
+
+function isValidContact(contact){
+  const value = String(contact || "").trim();
+  const hasEmailShape = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  const digitCount = (value.match(/\d/g) || []).length;
+  return hasEmailShape || digitCount >= 6;
 }
 
 function setStatus(status, message, visible, isError){

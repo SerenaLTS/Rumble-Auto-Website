@@ -61,6 +61,10 @@
     window.location.replace(targetUrl(targetFile, view));
   }
 
+  if(isRootIndex && currentPage === "index.html" && !forcedView){
+    return;
+  }
+
   if(forcedView === "mobile"){
     redirect(desktopToMobile[currentPage], "mobile");
     return;

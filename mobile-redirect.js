@@ -3,7 +3,6 @@
   const DESKTOP_MIN_WIDTH = 1024;
 
   const desktopToMobile = {
-    "index.html": "index_mobile.html",
     "models.html": "models_mobile.html",
     "services.html": "services_mobile.html",
     "fleet-finance.html": "fleet-finance_mobile.html",
@@ -61,7 +60,16 @@
     window.location.replace(targetUrl(targetFile, view));
   }
 
-  if(isRootIndex && currentPage === "index.html" && !forcedView){
+  // Home uses one canonical URL on every device. Keeping it out of the
+  // desktop/mobile switching prevents /, index.html and index_mobile.html
+  // from sending visitors back and forth.
+  if(isRootIndex || currentPage === "index.html" || currentPage === "index_mobile.html"){
+    if(!isRootIndex || forcedView){
+      const homeParams = new URLSearchParams(window.location.search);
+      homeParams.delete("view");
+      const query = homeParams.toString();
+      window.location.replace(`/${query ? `?${query}` : ""}${window.location.hash}`);
+    }
     return;
   }
 

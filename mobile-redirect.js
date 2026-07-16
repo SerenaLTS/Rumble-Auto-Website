@@ -60,15 +60,21 @@
     window.location.replace(targetUrl(targetFile, view));
   }
 
-  // Home uses one canonical URL on every device. Keeping it out of the
-  // desktop/mobile switching prevents /, index.html and index_mobile.html
-  // from sending visitors back and forth.
-  if(isRootIndex || currentPage === "index.html" || currentPage === "index_mobile.html"){
-    if(!isRootIndex || forcedView){
-      const homeParams = new URLSearchParams(window.location.search);
-      homeParams.delete("view");
-      const query = homeParams.toString();
-      window.location.replace(`/${query ? `?${query}` : ""}${window.location.hash}`);
+  // Cloudflare sends mobile Home requests to mobile_index.html, which then
+  // lands on index_mobile.html. Keep that mobile page stable so it never
+  // redirects back to / and re-enters the Cloudflare rule.
+  if(isRootIndex){
+    return;
+  }
+
+  if(currentPage === "index.html"){
+    window.location.replace(`/${window.location.hash}`);
+    return;
+  }
+
+  if(currentPage === "index_mobile.html"){
+    if(!isMobileDevice() && isDesktopViewport()){
+      window.location.replace(`/${window.location.hash}`);
     }
     return;
   }

@@ -42,7 +42,11 @@ function openModal(modelKey){
   modal.querySelector(".modal-desc").textContent = data.desc;
   modal.querySelector(".modal-specs").innerHTML = data.specs.map(([label,value]) => `<div><span class="mini-label">${label}</span><strong>${value}</strong></div>`).join("");
   const brochureLink = modal.querySelector(".modal-brochure");
-  if(brochureLink) brochureLink.href = data.brochure || "assets/brochures/sitrak-australia-overview.pdf";
+  if(brochureLink){
+    brochureLink.hidden = !data.brochure;
+    if(data.brochure) brochureLink.href = data.brochure;
+    else brochureLink.removeAttribute("href");
+  }
   modal.classList.add("is-open");
   modal.setAttribute("aria-hidden","false");
   document.body.style.overflow = "hidden";

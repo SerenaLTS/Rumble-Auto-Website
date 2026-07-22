@@ -39,7 +39,6 @@ const CONFIG = {
     
     // PDF手册
     brochures: {
-      sitrakOverview: 'brochures/sitrak-australia-overview.pdf',
       g5s4x2Cargo: 'brochures/G5S 4x2 Cab Chassis.pdf',
       g5s6x4Cargo: 'brochures/G5S 6x4 LWB Cab Chassis.pdf',
       g5s6x4Tipper: 'brochures/G5S 6x4 SWB Cab Chassis.pdf',

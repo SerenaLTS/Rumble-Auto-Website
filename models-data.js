@@ -37,7 +37,7 @@ window.RUMBLE_MODEL_DATA = {
     image: "https://www.rumbleauto.com.au/assets/models-webp/g5s-6x4-tipper-cab-chassis.webp?v=20260513",
     desc: "Built for Construction, Quarry & Heavy-Duty Tipper Applications. Purpose-engineered for construction, infrastructure and heavy material transport applications across Australia.",
     brochure: "assets/brochures/G5S 6x4 SWB Cab Chassis.pdf",
-    specs: [["Engine","MC07H.33-61"],["Displacement","7.36L"],["Max Power","240 kW @ 2200 rpm"],["Max Torque","1322 Nm @ 1200-1700 rpm"],["GVM","25,000 kg"],["Transmission","Allison 3200 Automatic"]]
+    specs: [["Engine","MC07H.31-61"],["Displacement","7.36L"],["Max Power","228 kW @ 2200 rpm"],["Max Torque","1250 Nm @ 1200-1700 rpm"],["GVM","25,000 kg"],["Transmission","Allison 3200P Automatic"]]
   },
   g5s8x4tipper: {
     title: "SITRAK G5S 8x4 Tipper Cab & Chassis",
@@ -61,7 +61,7 @@ window.RUMBLE_MODEL_DATA = {
     image: "https://www.rumbleauto.com.au/assets/models-webp/g7s-6x4-tipper-cab-chassis.webp?v=20260513",
     desc: "Heavy-Duty Engineering for Construction & Quarry Operations. Powered by a 12.42L high-output engine and matched with a ZF TraXon automated transmission.",
     brochure: "assets/brochures/G7S 6x4 Cab Chassis.pdf",
-    specs: [["Engine","540 HP MC13.54-61"],["Displacement","12.42L"],["Max Power","400 kW @ 1800 rpm"],["Max Torque","2500 Nm @ 1000-1400 rpm"],["GVM","25,000 kg"],["Transmission","ZF 12TX2621TD"]]
+    specs: [["Engine","540 HP MC13.54-61"],["Displacement","12.42L"],["Max Power","397 kW @ 1800 rpm"],["Max Torque","2500 Nm @ 1000-1400 rpm"],["GVM","25,000 kg"],["Transmission","ZF 12TX2621TD"]]
   },
   g7s8x4tipper: {
     title: "SITRAK G7S 8x4 Tipper Cab & Chassis",

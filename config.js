@@ -40,16 +40,16 @@ const CONFIG = {
     // PDF手册
     brochures: {
       sitrakOverview: 'brochures/sitrak-australia-overview.pdf',
-      g5s4x2Cargo: 'brochures/g5s-4x2-cargo-cab-chassis.pdf',
-      g5s6x4Cargo: 'brochures/g5s-6x4-cargo-cab-chassis.pdf',
-      g5s6x4Tipper: 'brochures/g5s-6x4-tipper-cab-chassis.pdf',
-      g5s8x4Cargo: 'brochures/g5s-8x4-cargo-cab-chassis.pdf',
-      g5s8x4Mixer: 'brochures/g5s-8x4-mixer-cab-chassis.pdf',
-      g5s8x4Tipper: 'brochures/g5s-8x4-tipper-cab-chassis.pdf',
-      g7s6x4Prime: 'brochures/g7s-6x4-prime-mover.pdf',
-      g7s6x4Tipper: 'brochures/g7s-6x4-tipper-cab-chassis.pdf',
-      g7s8x4Tipper: 'brochures/g7s-8x4-tipper-cab-chassis.pdf',
-      c9h6x4Prime: 'brochures/c9h-6x4-prime-mover.pdf',
+      g5s4x2Cargo: 'brochures/G5S 4x2 Cab Chassis.pdf',
+      g5s6x4Cargo: 'brochures/G5S 6x4 LWB Cab Chassis.pdf',
+      g5s6x4Tipper: 'brochures/G5S 6x4 SWB Cab Chassis.pdf',
+      g5s8x4Cargo: 'brochures/G5S 8x4 Cab Chassis.pdf',
+      g5s8x4Mixer: 'brochures/G5S 8x4 Cab Chassis.pdf',
+      g5s8x4Tipper: 'brochures/G5S 8x4 Cab Chassis.pdf',
+      g7s6x4Prime: 'brochures/G7S Prime Mover.pdf',
+      g7s6x4Tipper: 'brochures/G7S 6x4 Cab Chassis.pdf',
+      g7s8x4Tipper: 'brochures/G7S 8x4 Cab Chassis.pdf',
+      c9h6x4Prime: 'brochures/C9H Prime Mover.pdf',
     }
   },
 

@@ -60,10 +60,16 @@
     window.location.replace(targetUrl(targetFile, view));
   }
 
-  // Cloudflare sends mobile Home requests to mobile_index.html, which then
-  // lands on index_mobile.html. Keep that mobile page stable so it never
-  // redirects back to / and re-enters the Cloudflare rule.
+  // Route the home page locally. The public site may use DNS-only hosting,
+  // so mobile home navigation must not depend on a Cloudflare redirect rule.
   if(isRootIndex){
+    if(forcedView === "desktop") return;
+
+    if(forcedView === "mobile" || isMobileDevice()){
+      window.location.replace(
+        targetUrl("index_mobile.html", forcedView === "mobile" ? "mobile" : null)
+      );
+    }
     return;
   }
 
@@ -73,7 +79,9 @@
   }
 
   if(currentPage === "index_mobile.html"){
-    if(!isMobileDevice() && isDesktopViewport()){
+    if(forcedView === "mobile") return;
+
+    if(forcedView === "desktop" || (!isMobileDevice() && isDesktopViewport())){
       window.location.replace(`/${window.location.hash}`);
     }
     return;

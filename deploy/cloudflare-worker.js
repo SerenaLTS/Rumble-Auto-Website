@@ -1,0 +1,41 @@
+const SECURITY_HEADERS = {
+  "Content-Security-Policy": [
+    "default-src 'self'",
+    "base-uri 'self'",
+    "object-src 'none'",
+    "frame-ancestors 'self'",
+    "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com",
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: https://www.rumbleauto.com.au https://imagedelivery.net https://www.googletagmanager.com https://www.google-analytics.com https://*.googleusercontent.com https://*.gstatic.com https://maps.gstatic.com",
+    "font-src 'self' data:",
+    "connect-src 'self' https://api.rumbleauto.com.au https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://www.googletagmanager.com",
+    "frame-src https://www.googletagmanager.com https://www.google.com https://maps.google.com https://customer-zuaf2z7gpn8kxvi9.cloudflarestream.com",
+    "media-src 'self' blob: https://customer-zuaf2z7gpn8kxvi9.cloudflarestream.com https://videodelivery.net",
+    "form-action 'self'",
+    "upgrade-insecure-requests",
+  ].join("; "),
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
+  "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+  "X-Content-Type-Options": "nosniff",
+  "X-Frame-Options": "SAMEORIGIN",
+};
+
+export default {
+  async fetch(request) {
+    const url = new URL(request.url);
+
+    if (url.pathname === "/contact.html") {
+      return Response.redirect(`${url.origin}/#contact`, 308);
+    }
+
+    const originResponse = await fetch(request);
+    const response = new Response(originResponse.body, originResponse);
+
+    for (const [name, value] of Object.entries(SECURITY_HEADERS)) {
+      response.headers.set(name, value);
+    }
+
+    return response;
+  },
+};

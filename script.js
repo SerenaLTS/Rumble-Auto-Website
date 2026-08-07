@@ -3,6 +3,15 @@ const modelData = window.RUMBLE_MODEL_DATA || {};
 const toast = document.querySelector(".toast");
 let activeTopic = "";
 let toastTimer;
+let modalOpener = null;
+
+function activateModal(modal){
+  modalOpener = document.activeElement;
+  modal.classList.add("is-open");
+  modal.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+  modal.querySelector(".modal-close, [tabindex='-1']")?.focus();
+}
 
 function showToast(message){
   if(!toast) return;
@@ -47,18 +56,14 @@ function openModal(modelKey){
     if(data.brochure) brochureLink.href = data.brochure;
     else brochureLink.removeAttribute("href");
   }
-  modal.classList.add("is-open");
-  modal.setAttribute("aria-hidden","false");
-  document.body.style.overflow = "hidden";
+  activateModal(modal);
 }
 
 function openVideoModal(){
   const modal = document.getElementById("heroVideoModal");
   const video = modal?.querySelector(".video-modal-player");
   if(!modal) return;
-  modal.classList.add("is-open");
-  modal.setAttribute("aria-hidden","false");
-  document.body.style.overflow = "hidden";
+  activateModal(modal);
   if(video && typeof video.play === "function"){
     video.currentTime = 0;
     video.play().catch(() => {});
@@ -85,6 +90,8 @@ function closeModals(){
   });
   resetVideoModal();
   document.body.style.overflow = "";
+  if(modalOpener && typeof modalOpener.focus === "function") modalOpener.focus();
+  modalOpener = null;
 }
 
 function initSeriesCarousel(){
@@ -255,6 +262,21 @@ document.querySelectorAll(".modal").forEach(modal => modal.addEventListener("cli
 }));
 document.addEventListener("keydown", event => {
   if(event.key === "Escape") closeModals();
+  if(event.key === "Tab"){
+    const modal = document.querySelector(".modal.is-open");
+    if(!modal) return;
+    const focusable = [...modal.querySelectorAll('a[href]:not([hidden]), button:not([disabled]), [tabindex]:not([tabindex="-1"])')];
+    if(!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if(event.shiftKey && document.activeElement === first){
+      event.preventDefault();
+      last.focus();
+    }else if(!event.shiftKey && document.activeElement === last){
+      event.preventDefault();
+      first.focus();
+    }
+  }
 });
 
 document.querySelectorAll(".js-modal-quote").forEach(button => {

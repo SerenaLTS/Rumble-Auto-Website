@@ -1,7 +1,14 @@
 (function(){
   const STORAGE_KEY = "rumblePromoHideUntil";
-  const HIDE_HOURS = 3;
+  const HIDE_HOURS = 24;
   const HIDE_MS = HIDE_HOURS * 60 * 60 * 1000;
+  const OPEN_DELAY_MS = 8000;
+  let previouslyFocused = null;
+
+  function isHomePage(){
+    const page = window.location.pathname.split("/").pop();
+    return page === "" || page === "index.html" || page === "index_mobile.html";
+  }
 
   function shouldShowPromo(){
     const hideUntil = localStorage.getItem(STORAGE_KEY);
@@ -56,7 +63,7 @@
         <button class="promo-close" id="promoClose" type="button" aria-label="Close promotion">&times;</button>
 
         <a href="${contactHref()}" class="promo-poster-link" id="promoPosterLink">
-          <img src="assets/promotion-poster.png" alt="Special promotion from RUMBLE Auto" class="promo-poster">
+          <img data-src="assets/promotion-poster.webp" alt="Special promotion from RUMBLE Auto" class="promo-poster" decoding="async" width="1122" height="1402">
         </a>
       </div>
     `;
@@ -66,17 +73,21 @@
   }
 
   document.addEventListener("DOMContentLoaded", function(){
-    if(!shouldShowPromo()) return;
+    if(!isHomePage() || !shouldShowPromo()) return;
 
     const overlay = injectPromo();
     const closeBtn = overlay.querySelector("#promoClose");
     const posterLink = overlay.querySelector("#promoPosterLink");
 
     function openPromo(){
+      const poster = overlay.querySelector(".promo-poster");
+      if(poster && !poster.src) poster.src = poster.dataset.src;
+      previouslyFocused = document.activeElement;
       overlay.style.display = "flex";
       overlay.classList.add("is-open");
       overlay.setAttribute("aria-hidden", "false");
       document.body.style.overflow = "hidden";
+      closeBtn.focus();
     }
 
     function closePromo(){
@@ -85,9 +96,12 @@
       overlay.setAttribute("aria-hidden", "true");
       document.body.style.overflow = "";
       overlay.remove();
+      if(previouslyFocused && typeof previouslyFocused.focus === "function"){
+        previouslyFocused.focus();
+      }
     }
 
-    setTimeout(openPromo, 400);
+    setTimeout(openPromo, OPEN_DELAY_MS);
 
     closeBtn.addEventListener("click", closePromo);
 
@@ -110,6 +124,19 @@
     document.addEventListener("keydown", function(event){
       if(event.key === "Escape" && document.getElementById("promoOverlay")){
         closePromo();
+      }
+      if(event.key === "Tab" && overlay.classList.contains("is-open")){
+        const focusable = [...overlay.querySelectorAll('a[href], button:not([disabled])')];
+        if(!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if(event.shiftKey && document.activeElement === first){
+          event.preventDefault();
+          last.focus();
+        }else if(!event.shiftKey && document.activeElement === last){
+          event.preventDefault();
+          first.focus();
+        }
       }
     });
   });

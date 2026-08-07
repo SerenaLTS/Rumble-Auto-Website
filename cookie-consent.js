@@ -1,7 +1,7 @@
 (() => {
   const STORAGE_KEY = "rumble_cookie_consent_v2";
   const CONSENT_ACCEPTED = "accepted";
-  const CONSENT_DISMISSED = "dismissed";
+  const CONSENT_REJECTED = "rejected";
 
   function getConsentValue() {
     try {
@@ -158,22 +158,22 @@
             We use cookies and analytics to understand website traffic and improve your experience.
             See our <strong>Privacy Policy</strong> and Cookie Policy for more details.
           </div>
-          <button class="cookie-consent__close" type="button" aria-label="Close cookie notice">&times;</button>
+          <button class="cookie-consent__close" type="button" aria-label="Reject analytics cookies and close">&times;</button>
         </div>
         <div class="cookie-consent__actions">
           <a class="cookie-consent__link" href="privacy-policy.html">Privacy Policy</a>
           <a class="cookie-consent__link" href="cookie-policy.html">Cookie Policy</a>
-          <button class="cookie-consent__btn" type="button" data-consent="dismiss">Close</button>
+          <button class="cookie-consent__btn" type="button" data-consent="reject">Reject analytics</button>
           <button class="cookie-consent__btn cookie-consent__btn--primary" type="button" data-consent="accept">Accept</button>
         </div>
       </div>
     `;
 
-    const closeButtons = banner.querySelectorAll(".cookie-consent__close, [data-consent='dismiss']");
+    const closeButtons = banner.querySelectorAll(".cookie-consent__close, [data-consent='reject']");
     closeButtons.forEach((button) => {
       button.addEventListener("click", () => {
-        setConsentValue(CONSENT_DISMISSED);
-        dispatchConsentEvent(CONSENT_DISMISSED);
+        setConsentValue(CONSENT_REJECTED);
+        dispatchConsentEvent(CONSENT_REJECTED);
         closeBanner();
       });
     });
@@ -191,7 +191,7 @@
   window.rumbleCookieConsent = {
     storageKey: STORAGE_KEY,
     acceptedValue: CONSENT_ACCEPTED,
-    dismissedValue: CONSENT_DISMISSED,
+    rejectedValue: CONSENT_REJECTED,
     getValue: getConsentValue,
     hasAnalyticsConsent() {
       return getConsentValue() === CONSENT_ACCEPTED;

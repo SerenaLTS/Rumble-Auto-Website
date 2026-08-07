@@ -21,12 +21,19 @@ const SECURITY_HEADERS = {
   "X-Frame-Options": "SAMEORIGIN",
 };
 
+const CANONICAL_ORIGIN = "https://www.rumbleauto.com.au";
+
 export default {
   async fetch(request) {
     const url = new URL(request.url);
 
+    if (url.protocol !== "https:" || url.hostname !== "www.rumbleauto.com.au") {
+      const canonicalUrl = new URL(`${url.pathname}${url.search}`, CANONICAL_ORIGIN);
+      return Response.redirect(canonicalUrl.toString(), 308);
+    }
+
     if (url.pathname === "/contact.html") {
-      return Response.redirect(`${url.origin}/#contact`, 308);
+      return Response.redirect(`${CANONICAL_ORIGIN}/#contact`, 308);
     }
 
     const originResponse = await fetch(request);

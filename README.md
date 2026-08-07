@@ -31,8 +31,11 @@ configuration file.
 
 GitHub Pages does not process the repository's `_headers` file and cannot create
 HTTP redirects. To enable the security headers and the `/contact.html` redirect,
-deploy `deploy/cloudflare-worker.js` on a Cloudflare route covering
-`www.rumbleauto.com.au/*`. Keep the GitHub Pages custom domain as the origin.
+deploy `deploy/cloudflare-worker.js` on Cloudflare routes covering both
+`rumbleauto.com.au/*` and `www.rumbleauto.com.au/*`. Keep the GitHub Pages
+custom domain as the origin. The Worker permanently redirects every HTTP or
+non-www request to the equivalent `https://www.rumbleauto.com.au/` URL while
+preserving its path and query string.
 
 After deployment, verify:
 

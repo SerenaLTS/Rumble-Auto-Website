@@ -7,6 +7,7 @@
     "services.html": "services_mobile.html",
     "fleet-finance.html": "fleet-finance_mobile.html",
     "news1.html": "news1_mobile.html",
+    "news2.html": "news2_mobile.html",
     "g5s-4x2-cargo-cab-chassis.html": "g5s-4x2-cargo-cab-chassis_mobile.html",
     "g5s-6x4-cargo-cab-chassis.html": "g5s-6x4-cargo-cab-chassis_mobile.html",
     "g5s-8x4-cargo-cab-chassis.html": "g5s-8x4-cargo-cab-chassis_mobile.html",

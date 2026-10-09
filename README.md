@@ -19,7 +19,6 @@ Then open `http://localhost:8052/`.
 - `styles.css` and `styles_mobile.css`: desktop and mobile styles
 - `script.js` and `script_mobile.js`: page interactions
 - `enquiry.js`: enquiry form submission
-- `promo.js`: home-page promotion dialog
 - `cookie-consent.js` and `consent-init.js`: analytics consent
 - `assets/`: images, brochures and static media
 - `deploy/cloudflare-worker.js`: optional production edge headers and redirects

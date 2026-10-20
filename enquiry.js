@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const submitButton = form.querySelector("[type='submit']");
       const originalButtonText = submitButton?.textContent || "";
       const payload = buildPayload(form);
+      const marketingAtSubmit = window.rumbleConsent?.getChoice()?.marketing === true;
       const fingerprint = getSubmissionFingerprint(payload);
 
       if(isLikelyBot(form)){
@@ -51,14 +52,15 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         const data = await response.json().catch(() => ({}));
-        if(!response.ok || data.ok === false){
+        if(!response.ok || data.ok !== true){
           throw new Error(data.error || `Request failed (${response.status})`);
         }
 
         setStatus(status, "Thanks. Your enquiry has been submitted.", true, false);
         if(typeof showToast === "function") showToast("Thanks. Your enquiry has been submitted.");
         rememberSubmission(fingerprint);
-        trackLead(payload);
+        // Tracking errors must never turn a saved enquiry into a visible submission failure.
+        void trackLead(payload, marketingAtSubmit).catch(() => console.warn("Lead tracking unavailable"));
         form.reset();
       }catch(error){
         console.error("Enquiry submit failed:", error);
@@ -99,7 +101,8 @@ function buildPayload(form){
   payload.page = window.location.href;
   payload.page_title = document.title;
   payload.submitted_at = new Date().toISOString();
-  payload.idempotency_key = createIdempotencyKey(payload);
+  payload.idempotency_key = createIdempotencyKey();
+  payload.event_id = payload.idempotency_key;
 
   delete payload.topic;
   delete payload.model;
@@ -160,29 +163,122 @@ function rememberSubmission(fingerprint){
   }
 }
 
-function createIdempotencyKey(payload){
-  const source = getSubmissionFingerprint(payload);
-  let hash = 0;
-  for(let index = 0; index < source.length; index += 1){
-    hash = ((hash << 5) - hash + source.charCodeAt(index)) | 0;
-  }
-  return `${Date.now().toString(36)}-${Math.abs(hash).toString(36)}`;
+function createIdempotencyKey(){
+  return crypto.randomUUID();
 }
 
-function trackLead(payload){
-  const leadData = {
-    enquiry_type: payload.enquiry_type || "unknown",
-    preferred_model: payload.preferred_model || "",
-    page: payload.page || window.location.href,
-  };
+// Hashed matching data stays out of dataLayer, URLs, logs and browser storage.
+// GTM reads it only through JS - Lead User Data -> rumbleAdsUserData.
+const adsMatching = (() => {
+  let current = null;
+  let cleanupTimer;
+  let consentRevision = 0;
 
-  if(window.rumbleAnalytics && typeof window.rumbleAnalytics.trackLead === "function"){
-    window.rumbleAnalytics.trackLead(leadData);
+  function clear(eventId){
+    if(eventId && current?.eventId !== eventId) return;
+    current = null;
+    clearTimeout(cleanupTimer);
   }
 
-  window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({
-    event: "rumble_lead_submit",
-    ...leadData,
+  Object.defineProperty(window, "rumbleAdsUserData", {
+    configurable: true,
+    get(){
+      if(window.rumbleConsent?.getChoice()?.marketing !== true || !current || Date.now() >= current.expiresAt){
+        return {};
+      }
+      return { ...current.data };
+    }
   });
+
+  window.addEventListener("rumble-cookie-consent", () => {
+    if(window.rumbleConsent?.getChoice()?.marketing !== true){
+      consentRevision += 1;
+      clear();
+    }
+  });
+
+  return {
+    getRevision: () => consentRevision,
+    clear,
+    expose(eventId, data){
+      clear();
+      current = { eventId, data, expiresAt: Date.now() + 10000 };
+      cleanupTimer = setTimeout(() => clear(eventId), 10000);
+    }
+  };
+})();
+
+function normaliseMatchingContact(contact){
+  const value = String(contact || "").trim().toLowerCase();
+  if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)){
+    const [local, domain] = value.split("@");
+    const email = /^(gmail\.com|googlemail\.com)$/.test(domain)
+      ? `${local.replace(/\./g, "")}@${domain}` : value;
+    return { field: "sha256_email_address", value: email };
+  }
+
+  // The form serves Australia. Only infer +61 for valid-length Australian numbers;
+  // other countries must supply an explicit +country code or 00 prefix.
+  if(!/^[+\d\s().-]+$/.test(value)) return null;
+  let phone = value.replace(/[\s().-]/g, "");
+  if(/^00[1-9]/.test(phone)) phone = `+${phone.slice(2)}`;
+  if(/^0[23478]\d{8}$/.test(phone)) phone = `+61${phone.slice(1)}`;
+  if(/^61[23478]\d{8}$/.test(phone)) phone = `+${phone}`;
+  if(!/^\+[1-9]\d{7,14}$/.test(phone)) return null;
+  return { field: "sha256_phone_number", value: phone };
+}
+
+async function prepareMatchingData(contact){
+  const normalised = normaliseMatchingContact(contact);
+  if(!normalised || !crypto.subtle) return {};
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(normalised.value));
+  const hash = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, "0")).join("");
+  return { [normalised.field]: hash };
+}
+
+async function trackLead(payload, marketingAtSubmit){
+  const revision = adsMatching.getRevision();
+  let matchingData = {};
+  if(marketingAtSubmit && window.rumbleConsent?.getChoice()?.marketing === true){
+    let timeout;
+    try{
+      // If hashing fails or stalls, standard conversion tracking must still proceed.
+      matchingData = await Promise.race([
+        prepareMatchingData(payload.contact),
+        new Promise(resolve => { timeout = setTimeout(() => resolve({}), 1500); })
+      ]);
+    }catch(error){ /* Matching is optional; never fall back to exposing raw contact data. */ }
+    finally{ clearTimeout(timeout); }
+  }
+
+  // Consent can change while the API or hashing is in flight.
+  const choice = window.rumbleConsent?.getChoice();
+  if(!choice?.analytics && !choice?.marketing) return;
+
+  const leadData = {
+    event_id: payload.event_id,
+    transaction_id: payload.event_id,
+    enquiry_type: payload.enquiry_type || "unknown",
+    lead_type: payload.enquiry_type || "unknown",
+    // Exclude free-text model/topic and URL queries, which may contain personal data.
+    page_path: window.location.pathname,
+    analytics_consent: choice.analytics === true,
+    marketing_consent: choice.marketing === true,
+  };
+
+  window.dataLayer = window.dataLayer || [];
+  if(!choice.marketing || revision !== adsMatching.getRevision()) matchingData = {};
+  adsMatching.expose(payload.event_id, matchingData);
+  try{
+    window.dataLayer.push({
+      event: "rumble_lead_submit",
+      ...leadData,
+      // GTM calls this after event tags finish. The TTL also clears data if GTM is unavailable.
+      eventCallback: () => adsMatching.clear(payload.event_id),
+      eventTimeout: 2000,
+    });
+  }catch(error){
+    adsMatching.clear(payload.event_id);
+    throw error;
+  }
 }

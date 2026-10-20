@@ -1,41 +1,10 @@
 (() => {
-  const STORAGE_KEY = "rumble_cookie_consent_v2";
-  const CONSENT_ACCEPTED = "accepted";
-  const CONSENT_REJECTED = "rejected";
+  const consent = window.rumbleConsent;
+  if(!consent) return;
 
-  function getConsentValue() {
-    try {
-      return localStorage.getItem(STORAGE_KEY);
-    } catch (error) {
-      return null;
-    }
-  }
-
-  function setConsentValue(value) {
-    try {
-      localStorage.setItem(STORAGE_KEY, value);
-    } catch (error) {
-      return;
-    }
-  }
-
-  function dispatchConsentEvent(value) {
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){
-      window.dataLayer.push(arguments);
-    }
-    gtag("consent", "update", {
-      analytics_storage: value === CONSENT_ACCEPTED ? "granted" : "denied",
-      ad_storage: "denied",
-      ad_user_data: "denied",
-      ad_personalization: "denied",
-    });
-
-    window.dispatchEvent(
-      new CustomEvent("rumble-cookie-consent", {
-        detail: { value },
-      })
-    );
+  function saveChoice(analytics, marketing){
+    consent.setChoice(analytics, marketing);
+    closeBanner();
   }
 
   function closeBanner() {
@@ -54,7 +23,9 @@
         right:20px;
         bottom:20px;
         z-index:100000;
-        width:min(420px, calc(100vw - 24px));
+        width:min(460px, calc(100vw - 24px));
+        max-height:calc(100dvh - 24px);
+        overflow-y:auto;
         background:#FFFFFF;
         border:1px solid #D6DEE8;
         box-shadow:0 18px 44px rgba(15,23,42,.18);
@@ -155,63 +126,62 @@
       <div class="cookie-consent__inner">
         <div class="cookie-consent__top">
           <div class="cookie-consent__copy">
-            We use cookies and analytics to understand website traffic and improve your experience.
-            See our <strong>Privacy Policy</strong> and Cookie Policy for more details.
+            Essential storage keeps this website working. With your permission, analytics helps us
+            understand visits, and advertising tools from Google and Meta measure enquiries and
+            personalise ads. Advertising consent also allows us to share hashed contact details
+            from successful enquiries for matching. You can change your choice in Cookie settings.
           </div>
-          <button class="cookie-consent__close" type="button" aria-label="Reject analytics cookies and close">&times;</button>
+          <button class="cookie-consent__close" type="button" aria-label="Reject optional tracking and close">&times;</button>
         </div>
         <div class="cookie-consent__actions">
-          <a class="cookie-consent__link" href="privacy-policy.html">Privacy Policy</a>
-          <a class="cookie-consent__link" href="cookie-policy.html">Cookie Policy</a>
-          <button class="cookie-consent__btn" type="button" data-consent="reject">Reject analytics</button>
-          <button class="cookie-consent__btn cookie-consent__btn--primary" type="button" data-consent="accept">Accept</button>
+          <a class="cookie-consent__link" href="${location.pathname.endsWith("_mobile.html") ? "privacy-policy_mobile.html" : "privacy-policy.html"}">Privacy Policy</a>
+          <a class="cookie-consent__link" href="${location.pathname.endsWith("_mobile.html") ? "cookie-policy_mobile.html" : "cookie-policy.html"}">Cookie Policy</a>
+          <button class="cookie-consent__btn" type="button" data-consent="reject">Reject optional</button>
+          <button class="cookie-consent__btn" type="button" data-consent="analytics">Analytics only</button>
+          <button class="cookie-consent__btn cookie-consent__btn--primary" type="button" data-consent="accept">Accept all</button>
         </div>
       </div>
     `;
 
-    const closeButtons = banner.querySelectorAll(".cookie-consent__close, [data-consent='reject']");
-    closeButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        setConsentValue(CONSENT_REJECTED);
-        dispatchConsentEvent(CONSENT_REJECTED);
-        closeBanner();
-      });
+    banner.querySelectorAll(".cookie-consent__close, [data-consent='reject']").forEach(button => {
+      button.addEventListener("click", () => saveChoice(false, false));
     });
-
-    const acceptButton = banner.querySelector("[data-consent='accept']");
-    acceptButton.addEventListener("click", () => {
-      setConsentValue(CONSENT_ACCEPTED);
-      dispatchConsentEvent(CONSENT_ACCEPTED);
-      closeBanner();
-    });
-
+    banner.querySelector("[data-consent='analytics']").addEventListener("click", () => saveChoice(true, false));
+    banner.querySelector("[data-consent='accept']").addEventListener("click", () => saveChoice(true, true));
     return banner;
   }
 
   window.rumbleCookieConsent = {
-    storageKey: STORAGE_KEY,
-    acceptedValue: CONSENT_ACCEPTED,
-    rejectedValue: CONSENT_REJECTED,
-    getValue: getConsentValue,
-    hasAnalyticsConsent() {
-      return getConsentValue() === CONSENT_ACCEPTED;
+    storageKey: consent.storageKey,
+    getValue(){
+      const choice = consent.getChoice();
+      return choice ? (choice.analytics ? "accepted" : "rejected") : null;
     },
-    reset() {
-      try {
-        localStorage.removeItem(STORAGE_KEY);
-      } catch (error) {
-        return;
-      }
-      initCookieConsent();
+    getChoice: consent.getChoice,
+    hasAnalyticsConsent(){ return consent.getChoice()?.analytics === true; },
+    hasMarketingConsent(){ return consent.getChoice()?.marketing === true; },
+    reset(){
+      consent.setChoice(false, false);
+      this.show();
     },
-    show() {
+    show(){
       injectStyles();
       document.body.appendChild(buildBanner());
-    },
+    }
   };
 
   function initCookieConsent() {
-    if (getConsentValue()) return;
+    document.querySelectorAll(".footer-legal").forEach(footer => {
+      if(footer.querySelector("[data-cookie-settings]")) return;
+      const button = document.createElement("button");
+      button.type = "button";
+      button.dataset.cookieSettings = "true";
+      button.textContent = "Cookie settings";
+      button.style.cssText = "font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-decoration:underline";
+      button.addEventListener("click", () => window.rumbleCookieConsent.show());
+      footer.appendChild(button);
+    });
+    if (consent.getChoice()) return;
     injectStyles();
     document.body.appendChild(buildBanner());
   }

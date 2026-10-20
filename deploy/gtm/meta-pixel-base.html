@@ -1,0 +1,37 @@
+<script>
+(function () {
+  var pixelId = '1328602995881864';
+  var state = window.rumbleMetaPixel;
+  if (!state) {
+    state = window.rumbleMetaPixel = { initialized: false, pageViewSent: false };
+    state.syncConsent = function () {
+      var choice = window.rumbleConsent && window.rumbleConsent.getChoice();
+      if (!choice || choice.marketing !== true) {
+        if (state.initialized && window.fbq) window.fbq('consent', 'revoke');
+        return;
+      }
+      if (!window.fbq) {
+        !function(f,b,e,v,n,t,s) {
+          if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+          n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+          if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+          n.queue=[];t=b.createElement(e);t.async=!0;
+          t.src=v;s=b.getElementsByTagName(e)[0];
+          s.parentNode.insertBefore(t,s);
+        }(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+      }
+      window.fbq('consent', 'grant');
+      if (!state.initialized) {
+        window.fbq('init', pixelId);
+        state.initialized = true;
+      }
+      if (!state.pageViewSent) {
+        window.fbq('trackSingle', pixelId, 'PageView');
+        state.pageViewSent = true;
+      }
+    };
+    window.addEventListener('rumble-cookie-consent', state.syncConsent);
+  }
+  state.syncConsent();
+})();
+</script>

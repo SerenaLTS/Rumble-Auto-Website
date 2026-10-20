@@ -1,0 +1,25 @@
+<script>
+(function () {
+  var choice = window.rumbleConsent && window.rumbleConsent.getChoice();
+  if (!choice || choice.marketing !== true) return;
+
+  var eventId = {{DLV - event_id}};
+  var leadType = {{DLV - lead_type}};
+  if (typeof eventId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(eventId)) return;
+
+  var state = window.rumbleMetaPixel;
+  if (!state || !state.syncConsent) return;
+  state.syncConsent();
+  if (!state.initialized || typeof window.fbq !== 'function') return;
+
+  state.leadIds = state.leadIds || {};
+  if (state.leadIds[eventId]) return;
+
+  window.fbq('trackSingle', '1328602995881864', 'Lead', {
+    lead_type: typeof leadType === 'string' ? leadType : 'unknown'
+  }, {
+    eventID: eventId
+  });
+  state.leadIds[eventId] = true;
+})();
+</script>

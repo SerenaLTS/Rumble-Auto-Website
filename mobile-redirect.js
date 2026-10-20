@@ -75,7 +75,7 @@
   }
 
   if(currentPage === "index.html"){
-    window.location.replace(`/${window.location.hash}`);
+    window.location.replace(`/${window.location.search}${window.location.hash}`);
     return;
   }
 
@@ -83,7 +83,7 @@
     if(forcedView === "mobile") return;
 
     if(forcedView === "desktop" || (!isMobileDevice() && isDesktopViewport())){
-      window.location.replace(`/${window.location.hash}`);
+      window.location.replace(`/${window.location.search}${window.location.hash}`);
     }
     return;
   }

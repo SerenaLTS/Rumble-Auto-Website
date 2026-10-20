@@ -1,0 +1,18 @@
+// Local validation only. Production deployment is performed in the dashboard.
+{
+  "name": "rumble-api-local-validation",
+  "main": "rumble-api.js",
+  "compatibility_date": "2026-10-20",
+  "d1_databases": [{
+    "binding": "DB",
+    "database_name": "rumble-test-db",
+    "database_id": "00000000-0000-0000-0000-000000000000",
+    "migrations_dir": "migrations"
+  }],
+  "vars": {
+    "META_CAPI_ENABLED": "false",
+    "META_PIXEL_ID": "1328602995881864",
+    "META_GRAPH_API_VERSION": "v25.0"
+  },
+  "observability": { "enabled": true }
+}

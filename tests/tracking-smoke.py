@@ -69,6 +69,8 @@ with sync_playwright() as p:
             form.locator('[type=submit]').click()
             page.wait_for_function("document.querySelector('form#enquiryForm, form.js-form').dataset.enquirySubmitting === 'false'")
             assert not leads()
+        assert len({x['idempotency_key'] for x in submissions}) == 1
+        assert all(x['tracking_consent'] == {'version': 3, 'marketing': True} for x in submissions)
         api_result.update(status=200, body='{"ok":true}')
         form.locator('[type=submit]').click()
         page.wait_for_function("dataLayer.some(x => x.event === 'rumble_lead_submit')")
@@ -92,6 +94,8 @@ with sync_playwright() as p:
         form.locator('[type=submit]').click()
         page.wait_for_function("document.querySelector('form#enquiryForm, form.js-form').dataset.enquirySubmitting === 'false'")
         assert len(submissions) == count + 1 and len(leads()) == 1
+        assert submissions[-1]['tracking_consent']['marketing'] is False
+        assert 'meta_fbp' not in submissions[-1] and 'meta_fbc' not in submissions[-1]
         assert 'has been submitted' in form.locator('.form-status').inner_text()
         # A broken tag/dataLayer must never show a failed enquiry to the customer.
         page.evaluate("() => { rumbleConsent.setChoice(true,true); dataLayer.push = () => { throw new Error('test tag failure') }; }")

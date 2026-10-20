@@ -1,7 +1,7 @@
 # RUMBLE tracking setup — staged implementation
 
 Updated 20 October 2026. These are local changes, not a live installation.
-CAPI is deferred. No CAPI token or secrets are needed for this stage.
+Browser tracking is deployed; CAPI is now in the rollout/testing stage. See deploy/CAPI_SETUP.md for the additive D1 migration, Worker configuration, testing and activation sequence.
 
 ## 1. Prepared locally
 
@@ -95,7 +95,7 @@ node tests/enhanced-conversions.cjs
 python3 tests/tracking-smoke.py
 ```
 
-CAPI is still deferred; the browser Meta implementation does not send customer contact matching data.
+CAPI implementation is available in deploy/rumble-api.js and its rollout is documented in deploy/CAPI_SETUP.md. The browser Meta implementation does not send customer contact matching data; the consented server event hashes contact data separately.
 
 Reference: https://support.google.com/google-ads/answer/13262500?hl=en-AU
 
@@ -108,7 +108,7 @@ Reference: https://support.google.com/google-ads/answer/13262500?hl=en-AU
 - `_headers` is ignored by GitHub Pages. A public HTTPS header read on 20 October returned GitHub Pages headers with no CSP; no edge Worker CSP deployment is currently needed for this host. Keep the matching CSP source prepared for a future edge deployment; do not deploy an edge Worker just for this tracking rollout.
 - Use GTM Preview / Tag Assistant and Meta Test Events. Test every consent choice, desktop/mobile, enquiry types, API errors, successful leads and double clicks. Confirm no duplicate pre-existing tags.
 - Live tests may create real lead emails/database records and advertising test events; use clearly marked test submissions and coordinate with the team.
-- CAPI and browser/server deduplication remain unimplemented until the backend stage.
+- CAPI and browser/server deduplication are now implemented locally and the user has deployed the Worker and created the two helper tables. OPTIONS readback confirms the new production API headers. Meta reception/deduplication and activation remain pending; see deploy/CAPI_SETUP.md.
 
 References:
 - https://developers.google.com/tag-platform/security/guides/consent

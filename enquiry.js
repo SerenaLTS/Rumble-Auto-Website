@@ -1,6 +1,8 @@
 const API_URL = "https://api.rumbleauto.com.au";
 const DUPLICATE_WINDOW_MS = 30000;
 const MIN_SUBMIT_MS = 1200;
+// Preserve the same key after an uncertain response; clear it only after confirmed success.
+const pendingSubmissions = new WeakMap();
 
 document.addEventListener("DOMContentLoaded", () => {
   const forms = document.querySelectorAll("form.js-form, form#enquiryForm");
@@ -59,6 +61,10 @@ document.addEventListener("DOMContentLoaded", () => {
         setStatus(status, "Thanks. Your enquiry has been submitted.", true, false);
         if(typeof showToast === "function") showToast("Thanks. Your enquiry has been submitted.");
         rememberSubmission(fingerprint);
+        pendingSubmissions.delete(form);
+        if(typeof data.event_id === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(data.event_id)){
+          payload.event_id = data.event_id;
+        }
         // Tracking errors must never turn a saved enquiry into a visible submission failure.
         void trackLead(payload, marketingAtSubmit).catch(() => console.warn("Lead tracking unavailable"));
         form.reset();
@@ -101,14 +107,37 @@ function buildPayload(form){
   payload.page = window.location.href;
   payload.page_title = document.title;
   payload.submitted_at = new Date().toISOString();
-  payload.idempotency_key = createIdempotencyKey();
-  payload.event_id = payload.idempotency_key;
+  const fingerprint = JSON.stringify(["name", "contact", "enquiry_type", "preferred_model", "message", "page"]
+    .map(key => String(payload[key] || "").trim()));
+  let pending = pendingSubmissions.get(form);
+  if(!pending || pending.fingerprint !== fingerprint){
+    pending = { fingerprint, key: createIdempotencyKey() };
+    pendingSubmissions.set(form, pending);
+  }
+  payload.idempotency_key = pending.key;
+  payload.event_id = pending.key;
+  const marketing = window.rumbleConsent?.getChoice()?.marketing === true;
+  payload.tracking_consent = { version: 3, marketing };
+  if(marketing){
+    const fbp = readMetaCookie("_fbp"), fbc = readMetaCookie("_fbc");
+    if(fbp) payload.meta_fbp = fbp;
+    if(fbc) payload.meta_fbc = fbc;
+    if(new URLSearchParams(window.location.search).get("meta_test") === "1") payload.meta_test = true;
+  }
 
   delete payload.topic;
   delete payload.model;
   delete payload.company_website;
 
   return payload;
+}
+
+function readMetaCookie(name){
+  try{
+    const prefix = `${name}=`;
+    const part = document.cookie.split(";").map(item => item.trim()).find(item => item.startsWith(prefix));
+    return part ? decodeURIComponent(part.slice(prefix.length)) : "";
+  }catch(error){ return ""; }
 }
 
 function isLikelyBot(form){

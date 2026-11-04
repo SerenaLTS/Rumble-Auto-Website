@@ -28,6 +28,26 @@
 
   function gtag(){ window.dataLayer.push(arguments); }
   var analyticsStarted = false;
+  var clarityStarted = false;
+  function syncClarity(choice){
+    if(!clarityStarted && !choice?.analytics) return;
+    if(!clarityStarted){
+      clarityStarted = true;
+      window.clarity = window.clarity || function(){
+        (window.clarity.q = window.clarity.q || []).push(arguments);
+      };
+      var script = document.createElement("script");
+      script.async = true;
+      script.src = "https://www.clarity.ms/tag/z88dam199g";
+      document.head.appendChild(script);
+    }
+    window.clarity("consentv2", {
+      analytics_Storage: choice?.analytics ? "granted" : "denied",
+      ad_Storage: choice?.marketing ? "granted" : "denied"
+    });
+    // The legacy withdrawal command clears cookies and prevents further tracking.
+    if(!choice?.analytics) window.clarity("consent", false);
+  }
   function startAnalytics(choice){
     if(analyticsStarted || !choice || !choice.analytics) return;
     analyticsStarted = true;
@@ -47,6 +67,7 @@
       // Consent update precedes the event that GTM can use to initialise allowed tags.
       gtag("consent", "update", consentSettings(memoryChoice));
       startAnalytics(memoryChoice);
+      syncClarity(memoryChoice);
       window.dataLayer.push({
         event: "rumble_consent_update",
         analytics_consent: memoryChoice.analytics,
@@ -57,4 +78,5 @@
   };
   gtag("consent", "default", consentSettings(getChoice()));
   startAnalytics(getChoice());
+  syncClarity(getChoice());
 })();

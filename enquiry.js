@@ -296,6 +296,18 @@ async function trackLead(payload, marketingAtSubmit){
   };
 
   window.dataLayer = window.dataLayer || [];
+  if(choice.analytics){
+    // Only confirmed API successes reach trackLead. Keep contact and free text out.
+    try{
+      window.dataLayer.push((function(){ return arguments; })("event", "generate_lead", {
+        send_to: "G-RKQ93XKZF2",
+        event_id: payload.event_id,
+        enquiry_type: leadData.enquiry_type,
+        page_location: window.location.origin + window.location.pathname,
+        page_referrer: ""
+      }));
+    }catch(error){ /* Analytics must not interrupt Ads/Meta or a saved enquiry. */ }
+  }
   if(!choice.marketing || revision !== adsMatching.getRevision()) matchingData = {};
   adsMatching.expose(payload.event_id, matchingData);
   try{

@@ -38,9 +38,12 @@ with sync_playwright() as p:
         default = page.evaluate('Array.from(dataLayer[0])')
         assert default[0:2] == ['consent', 'default']
         assert default[2]['ad_user_data'] == default[2]['analytics_storage'] == 'denied'
+        assert page.locator('script[src*="clarity.ms/tag/"]').count() == 0
         # Old analytics consent is not silently promoted to advertising consent.
         banner.locator('[data-consent=analytics]').click()
         assert page.evaluate('rumbleConsent.getChoice()') == {'version': 3, 'analytics': True, 'marketing': False}
+        assert page.locator('script[src="https://www.clarity.ms/tag/z88dam199g"]').count() == 1
+        assert page.evaluate('clarity.q.at(-1)[1].ad_Storage') == 'denied'
         page.reload()
         assert page.locator('#cookieConsentBanner').count() == 0
         assert page.evaluate('dataLayer[0][2].ad_user_data') == 'denied'
@@ -62,18 +65,27 @@ with sync_playwright() as p:
         page.evaluate("document.querySelector('form#enquiryForm, form.js-form').dataset.enquiryStartedAt = '1'")
         def leads():
             return page.evaluate("dataLayer.filter(x => x.event === 'rumble_lead_submit')")
-        assert not leads()
+        def ga4_leads():
+            return page.evaluate("dataLayer.filter(x => x[0] === 'event' && x[1] === 'generate_lead').map(x => x[2])")
+        assert not leads() and not ga4_leads()
+        assert form.get_attribute('data-clarity-mask') == 'True'
         # HTTP failures and malformed/ambiguous successes must not create conversions.
         for result in ({'status': 500, 'body':'{"ok":false}'}, {'status':200,'body':'{}'}, {'status':200,'body':'invalid json'}):
             api_result.update(result)
             form.locator('[type=submit]').click()
             page.wait_for_function("document.querySelector('form#enquiryForm, form.js-form').dataset.enquirySubmitting === 'false'")
-            assert not leads()
+            assert not leads() and not ga4_leads()
         assert len({x['idempotency_key'] for x in submissions}) == 1
         assert all(x['tracking_consent'] == {'version': 3, 'marketing': True} for x in submissions)
         api_result.update(status=200, body='{"ok":true}')
         form.locator('[type=submit]').click()
         page.wait_for_function("dataLayer.some(x => x.event === 'rumble_lead_submit')")
+        assert len(ga4_leads()) == 1
+        ga4 = ga4_leads()[0]
+        assert ga4['send_to'] == 'G-RKQ93XKZF2'
+        assert ga4['enquiry_type'] == 'General Enquiry'
+        assert 'offline@example.com' not in json.dumps(ga4)
+        assert '?' not in ga4['page_location']
         event = leads()[0]
         assert event['event_id'] == event['transaction_id'] == submissions[-1]['event_id']
         assert event['lead_type'] == 'General Enquiry' and event['marketing_consent'] is True
@@ -90,10 +102,13 @@ with sync_playwright() as p:
         page.locator('[data-cookie-settings]').click()
         page.locator('[data-consent=reject]').click()
         assert not page.evaluate('rumbleCookieConsent.hasMarketingConsent()')
+        assert page.evaluate('clarity.q.at(-1)[0]') == 'consent'
+        assert page.evaluate('clarity.q.at(-1)[1]') is False
         form.locator('[name=message]').fill('A different offline enquiry after rejecting tracking.')
         form.locator('[type=submit]').click()
         page.wait_for_function("document.querySelector('form#enquiryForm, form.js-form').dataset.enquirySubmitting === 'false'")
         assert len(submissions) == count + 1 and len(leads()) == 1
+        assert len(ga4_leads()) == 1
         assert submissions[-1]['tracking_consent']['marketing'] is False
         assert 'meta_fbp' not in submissions[-1] and 'meta_fbc' not in submissions[-1]
         assert 'has been submitted' in form.locator('.form-status').inner_text()

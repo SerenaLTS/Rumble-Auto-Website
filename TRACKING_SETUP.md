@@ -1,3 +1,22 @@
+## GA4 enquiry events and Microsoft Clarity — 4 November 2026
+
+- Successful API-confirmed enquiries send `generate_lead` to `G-RKQ93XKZF2`
+  only when analytics consent remains granted. Parameters include event ID and
+  enquiry type, with a path-only page location. No contact details or free text.
+  Existing failed-response and duplicate-submission protection remains in place.
+- Microsoft Clarity project `z88dam199g` loads through the head's shared consent
+  script only after analytics consent. ConsentV2 passes analytics and marketing
+  choices separately; withdrawal also clears Clarity cookies via consent(false).
+- All enquiry forms have `data-clarity-mask="True"`; cookie/privacy text discloses
+  heatmaps and session recordings. The prepared `_headers` permits Clarity;
+  production GitHub Pages currently sends no CSP and ignores `_headers`.
+- Offline desktop/mobile browser checks cover success-only GA4 delivery commands,
+  API failures, duplicates, denied consent, Clarity consent signals and masking.
+- Account-side follow-up: confirm events in GA4 Realtime and mark `generate_lead`
+  as a key event; register `enquiry_type` as an event-scoped custom dimension if
+  segmented reports are needed. Confirm recordings/heatmaps in the Clarity project.
+  Do not add duplicate GA4 or Clarity installations in GTM.
+
 ## GA4 — 4 November 2026
 
 GA4 `G-RKQ93XKZF2` is installed directly through the shared `consent-init.js`,

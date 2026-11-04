@@ -127,7 +127,7 @@
         <div class="cookie-consent__top">
           <div class="cookie-consent__copy">
             Essential storage keeps this website working. With your permission, analytics helps us
-            understand visits, and advertising tools from Google and Meta measure enquiries and
+            understand visits and enquiries. Microsoft Clarity provides heatmaps and session recordings with forms masked. Advertising tools from Google and Meta measure enquiries and
             personalise ads. Advertising consent also allows us to share hashed contact details
             from successful enquiries for matching. You can change your choice in Cookie settings.
           </div>

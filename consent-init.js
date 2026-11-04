@@ -27,6 +27,17 @@
   }
 
   function gtag(){ window.dataLayer.push(arguments); }
+  var analyticsStarted = false;
+  function startAnalytics(choice){
+    if(analyticsStarted || !choice || !choice.analytics) return;
+    analyticsStarted = true;
+    gtag("js", new Date());
+    gtag("config", "G-RKQ93XKZF2");
+    var script = document.createElement("script");
+    script.async = true;
+    script.src = "https://www.googletagmanager.com/gtag/js?id=G-RKQ93XKZF2";
+    document.head.appendChild(script);
+  }
   window.rumbleConsent = {
     storageKey: STORAGE_KEY,
     getChoice,
@@ -35,6 +46,7 @@
       try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(memoryChoice)); }catch(error){ /* Keep this page's choice in memory. */ }
       // Consent update precedes the event that GTM can use to initialise allowed tags.
       gtag("consent", "update", consentSettings(memoryChoice));
+      startAnalytics(memoryChoice);
       window.dataLayer.push({
         event: "rumble_consent_update",
         analytics_consent: memoryChoice.analytics,
@@ -44,4 +56,5 @@
     }
   };
   gtag("consent", "default", consentSettings(getChoice()));
+  startAnalytics(getChoice());
 })();

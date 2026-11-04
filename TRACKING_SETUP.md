@@ -1,3 +1,13 @@
+## GA4 — 4 November 2026
+
+GA4 `G-RKQ93XKZF2` is installed directly through the shared `consent-init.js`,
+referenced by all 37 desktop/mobile HTML pages. It loads only after analytics
+consent (including a saved choice), after the Consent Mode default/update, and
+initializes once per page. Existing GTM remains responsible for Ads and Meta.
+Do not also add this GA4 configuration in GTM without removing the direct
+configuration, to avoid duplicate page views. Confirm reception in GA4 Realtime
+with an analytics-consented visit; property access is required for that check.
+
 # RUMBLE tracking setup — staged implementation
 
 Updated 20 October 2026. These are local changes, not a live installation.
